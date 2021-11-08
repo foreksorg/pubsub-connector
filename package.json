@@ -1,12 +1,12 @@
 {
   "name": "foreks-pubsub-connector",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Foreks Pubsub Connection",
   "type": "commonjs",
-  "main": "dist/index.js",
-  "typings": "types/index.d.ts",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -d",
     "test": "node test/"
   },
   "repository": {
