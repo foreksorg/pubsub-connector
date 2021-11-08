@@ -3,7 +3,7 @@
   Foreks publisher subscriber connection class
 
 ```js
-import { PubsubConnector }  from 'pubsub-connector';
+import { PubsubConnector }  from 'foreks-pubsub-connector';
 
 const options = {
     username: '', // socket username
