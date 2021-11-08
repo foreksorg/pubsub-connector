@@ -1,0 +1,27 @@
+{
+  "name": "foreks-pubsub-socket",
+  "version": "1.0.0",
+  "description": "Foreks Pubsub Connection",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/foreksorg/pubsub-connector.git"
+  },
+  "keywords": [
+    "foreks",
+    "pubsub"
+  ],
+  "author": "Emre Toprak",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/foreksorg/pubsub-connector/issues"
+  },
+  "homepage": "https://github.com/foreksorg/pubsub-connector#readme",
+  "devDependencies": {
+    "@types/node": "^16.11.6",
+    "typescript": "^4.4.4"
+  }
+}
