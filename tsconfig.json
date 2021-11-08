@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "outDir": "./dist",
-    "target": "ES6",
-    "module": "commonjs",
+    "target": "ESNext",
+    "module": "CommonJS",
     "strict": true,
     "noImplicitAny": false,
     "allowSyntheticDefaultImports": true,
@@ -14,8 +14,7 @@
     "noEmit": true,
     "declaration": true,
     "moduleResolution": "node",
-    "types": ["node", "jest"],
-    "lib": ["ES6", "dom"]
+    "types": ["node", "jest"]
   },
   "include": ["./src/**/*.ts"],
   "exclude": ["node_modules", "test"]

@@ -1,12 +1,11 @@
 'use strict';
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PubsubConnector = void 0;
 var ws_1 = require("ws");
-var PubsubConnector = (function () {
-    function PubsubConnector() {
+var default_1 = (function () {
+    function default_1() {
     }
-    PubsubConnector.connect = function (options) {
+    default_1.connect = function (options) {
         var _this = this;
         this._options = options;
         return new Promise(function (resolve, reject) {
@@ -49,7 +48,7 @@ var PubsubConnector = (function () {
             }
         });
     };
-    PubsubConnector.isSocketReady = function () {
+    default_1.isSocketReady = function () {
         if (this._socket) {
             return this._socket.readyState === ws_1.WebSocket.OPEN;
         }
@@ -57,12 +56,12 @@ var PubsubConnector = (function () {
             return false;
         }
     };
-    PubsubConnector.getSubscriptionsById = function (id) {
+    default_1.getSubscriptionsById = function (id) {
         if (this._subscriptions[id]) {
             return this._subscriptions[id];
         }
     };
-    PubsubConnector.send = function (message) {
+    default_1.send = function (message) {
         var _this = this;
         if (this.isSocketReady()) {
             this._socket.send(message);
@@ -73,7 +72,7 @@ var PubsubConnector = (function () {
             }, 400);
         }
     };
-    PubsubConnector.login = function (username, password, resource) {
+    default_1.login = function (username, password, resource) {
         if (this.isSocketReady()) {
             this.send(JSON.stringify({
                 _id: 64,
@@ -97,7 +96,7 @@ var PubsubConnector = (function () {
             }));
         }
     };
-    PubsubConnector.scheduleHeartbeat = function () {
+    default_1.scheduleHeartbeat = function () {
         var _this = this;
         setInterval(function () {
             _this.send(JSON.stringify({
@@ -105,7 +104,7 @@ var PubsubConnector = (function () {
             }));
         }, 14000);
     };
-    PubsubConnector.subscribe = function (symbols, fields, callback) {
+    default_1.subscribe = function (symbols, fields, callback) {
         if (!symbols[0]) {
             throw new Error("Symbol expired");
         }
@@ -126,7 +125,7 @@ var PubsubConnector = (function () {
         this.addSubscriptions(this._subId, symbols, fields, callback);
         return this._subId;
     };
-    PubsubConnector.checkSubscriptionHasSnapshot = function (symbols, fields) {
+    default_1.checkSubscriptionHasSnapshot = function (symbols, fields) {
         var _this = this;
         symbols.forEach(function (s) {
             fields.forEach(function (f) {
@@ -143,7 +142,7 @@ var PubsubConnector = (function () {
             });
         });
     };
-    PubsubConnector.getFieldSnapShotValue = function (definitionId, fieldShortCode) {
+    default_1.getFieldSnapShotValue = function (definitionId, fieldShortCode) {
         if (this._subscriptions[definitionId] &&
             this._subscriptions[definitionId][fieldShortCode] &&
             this._subscriptions[definitionId][fieldShortCode].val) {
@@ -151,7 +150,7 @@ var PubsubConnector = (function () {
         }
         return null;
     };
-    PubsubConnector.addSubscriptions = function (subId, symbols, fields, callback) {
+    default_1.addSubscriptions = function (subId, symbols, fields, callback) {
         var _this = this;
         symbols.forEach(function (s) {
             if (!_this._subscriptions[s]) {
@@ -170,7 +169,7 @@ var PubsubConnector = (function () {
             });
         });
     };
-    PubsubConnector.reSubscribe = function () {
+    default_1.reSubscribe = function () {
         var _this = this;
         if (this.isSocketReady()) {
             this._subscriptions = {};
@@ -181,7 +180,7 @@ var PubsubConnector = (function () {
             });
         }
     };
-    PubsubConnector.unSubscribe = function (id) {
+    default_1.unSubscribe = function (id) {
         var _this = this;
         var findSub = this._subscriptionsMap.find(function (s) { return s.id === id; });
         var unSubSymbols = [];
@@ -215,7 +214,7 @@ var PubsubConnector = (function () {
             }));
         }
     };
-    PubsubConnector.feedSubscriptions = function (data) {
+    default_1.feedSubscriptions = function (data) {
         var _this = this;
         if (this._subscriptions[data._i]) {
             Object.keys(data).forEach(function (d) {
@@ -225,7 +224,7 @@ var PubsubConnector = (function () {
             });
         }
     };
-    PubsubConnector.callback = function (data) {
+    default_1.callback = function (data) {
         if (this._subscriptions[data._i] &&
             this._subscriptions[data._i].callback &&
             this._subscriptions[data._i].callback) {
@@ -236,7 +235,7 @@ var PubsubConnector = (function () {
             }
         }
     };
-    PubsubConnector.messageEvent = function (message) {
+    default_1.messageEvent = function (message) {
         switch (message._id) {
             case 0:
                 break;
@@ -268,10 +267,10 @@ var PubsubConnector = (function () {
                 break;
         }
     };
-    PubsubConnector._subscriptions = {};
-    PubsubConnector._subscriptionsMap = [];
-    PubsubConnector._isLogin = false;
-    PubsubConnector._subId = 0;
-    return PubsubConnector;
+    default_1._subscriptions = {};
+    default_1._subscriptionsMap = [];
+    default_1._isLogin = false;
+    default_1._subId = 0;
+    return default_1;
 }());
-exports.PubsubConnector = PubsubConnector;
+exports.default = default_1;
