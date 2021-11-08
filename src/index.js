@@ -2,18 +2,19 @@
  * @description Pubsub Socket Service provide connect socket and manage socket actions
  */
 export default class default_1 {
-    static socket;
-    static subscriptions = {};
-    static subscriptionsMap = [];
-    static lastStatus;
-    static isLogged = false;
-    static isLoginMessageSent = false;
-    static subId = 0;
+    static _socket;
+    static _subscriptions = {};
+    static _subscriptionsMap = [];
+    static _isLogged = false;
+    static _isLoginMessageSent = false;
+    static _subId = 0;
+    static _options;
     /**
      * @description connect to socket
      * @param {PubSubConnectionOptions} options : options
      */
     static connect(options) {
+        this._options = options;
         return new Promise((resolve, reject) => {
             const _self = this;
             let server;
@@ -30,16 +31,16 @@ export default class default_1 {
             // on server open
             if (server) {
                 server.onopen = function () {
-                    _self.socket.onmessage = (msg) => {
-                        options.messageEvent(JSON.parse(msg.data));
+                    _self._socket.onmessage = (msg) => {
+                        _self.messageEvent(JSON.parse(msg.data));
                         _self.feedSubscriptions(JSON.parse(msg.data));
                     };
-                    _self.socket.onclose = () => {
+                    _self._socket.onclose = () => {
                         setTimeout(() => {
                             _self.connect(options);
                         }, options.reConnectInterval || 5000);
                     };
-                    if (!_self.isLogged && !_self.isLoginMessageSent) {
+                    if (!_self._isLogged && !_self._isLoginMessageSent) {
                         _self.login(options.username, options.password, options.resource);
                     }
                     if (options.isReconnection) {
@@ -65,8 +66,8 @@ export default class default_1 {
      * @return {boolean}
      */
     static isSocketReady() {
-        if (this.socket) {
-            return this.socket.readyState === WebSocket.OPEN;
+        if (this._socket) {
+            return this._socket.readyState === WebSocket.OPEN;
         }
         else {
             return false;
@@ -77,8 +78,8 @@ export default class default_1 {
      * @param {string} id : id
      */
     static getSubscriptionsById(id) {
-        if (this.subscriptions[id]) {
-            return this.subscriptions[id];
+        if (this._subscriptions[id]) {
+            return this._subscriptions[id];
         }
     }
     /**
@@ -87,7 +88,7 @@ export default class default_1 {
      */
     static send(message) {
         if (this.isSocketReady()) {
-            this.socket.send(message);
+            this._socket.send(message);
         }
         else {
             setTimeout(() => {
@@ -124,7 +125,7 @@ export default class default_1 {
                 resource: resource,
             }));
         }
-        this.isLoginMessageSent = true;
+        this._isLoginMessageSent = true;
     }
     /**
      * @description schedule heart beat for socket service.
@@ -147,22 +148,22 @@ export default class default_1 {
         if (!symbols[0]) {
             throw new Error("Symbol expired");
         }
-        this.subId = this.subId + 1;
+        this._subId = this._subId + 1;
         this.checkSubscriptionHasSnapshot(symbols, fields);
         this.send(JSON.stringify({
             _id: 1,
-            id: this.subId,
+            id: this._subId,
             symbols: symbols,
             fields: fields,
         }));
-        this.subscriptionsMap.push({
-            id: this.subId,
+        this._subscriptionsMap.push({
+            id: this._subId,
             symbols: symbols,
             fields: fields,
             callback: callback,
         });
-        this.addSubscriptions(this.subId, symbols, fields, callback);
-        return this.subId;
+        this.addSubscriptions(this._subId, symbols, fields, callback);
+        return this._subId;
     }
     /**
      * @description check subscription has snapshot data if has sent it to pubsub sendData service
@@ -172,12 +173,12 @@ export default class default_1 {
     static checkSubscriptionHasSnapshot(symbols, fields) {
         symbols.forEach((s) => {
             fields.forEach((f) => {
-                if (this.subscriptions[s]) {
-                    if (this.subscriptions[s][f]) {
-                        if (this.subscriptions[s][f].val) {
+                if (this._subscriptions[s]) {
+                    if (this._subscriptions[s][f]) {
+                        if (this._subscriptions[s][f].val) {
                             const sendData = { _id: 1, _s: 1, _i: "" };
                             sendData._i = s;
-                            sendData[f] = this.subscriptions[s][f].val;
+                            sendData[f] = this._subscriptions[s][f].val;
                             this.callback(sendData);
                         }
                     }
@@ -191,12 +192,10 @@ export default class default_1 {
      * @param {string} fieldShortCode : fields shortcode
      */
     static getFieldSnapShotValue(definitionId, fieldShortCode) {
-        if (this.subscriptions[definitionId]) {
-            if (this.subscriptions[definitionId][fieldShortCode]) {
-                if (this.subscriptions[definitionId][fieldShortCode].val) {
-                    return this.subscriptions[definitionId][fieldShortCode].val;
-                }
-            }
+        if (this._subscriptions[definitionId] &&
+            this._subscriptions[definitionId][fieldShortCode] &&
+            this._subscriptions[definitionId][fieldShortCode].val) {
+            return this._subscriptions[definitionId][fieldShortCode].val;
         }
         return null;
     }
@@ -209,18 +208,18 @@ export default class default_1 {
      */
     static addSubscriptions(subId, symbols, fields, callback) {
         symbols.forEach((s) => {
-            if (!this.subscriptions[s]) {
-                this.subscriptions[s] = {};
-                this.subscriptions[s].callback = {};
+            if (!this._subscriptions[s]) {
+                this._subscriptions[s] = {};
+                this._subscriptions[s].callback = {};
             }
-            this.subscriptions[s].callback[subId] = callback;
+            this._subscriptions[s].callback[subId] = callback;
             fields.forEach((f) => {
-                if (!this.subscriptions[s][f]) {
-                    this.subscriptions[s][f] = {};
-                    this.subscriptions[s][f].count = 1;
+                if (!this._subscriptions[s][f]) {
+                    this._subscriptions[s][f] = {};
+                    this._subscriptions[s][f].count = 1;
                 }
                 else {
-                    this.subscriptions[s][f].count = this.subscriptions[s][f].count + 1;
+                    this._subscriptions[s][f].count = this._subscriptions[s][f].count + 1;
                 }
             });
         });
@@ -230,9 +229,9 @@ export default class default_1 {
      */
     static reSubscribe() {
         if (this.isSocketReady()) {
-            this.subscriptions = {};
-            const tempSubMap = Object.assign([], this.subscriptionsMap);
-            this.subscriptionsMap = [];
+            this._subscriptions = {};
+            const tempSubMap = Object.assign([], this._subscriptionsMap);
+            this._subscriptionsMap = [];
             tempSubMap.forEach((s) => {
                 this.subscribe(s.symbols, s.fields, s.callback);
             });
@@ -243,24 +242,24 @@ export default class default_1 {
      * @param {number} id : subscription id
      */
     static unSubscribe(id) {
-        const findSub = this.subscriptionsMap.find((s) => s.id === id);
+        const findSub = this._subscriptionsMap.find((s) => s.id === id);
         const unSubSymbols = [];
         const unSubFields = [];
         if (findSub) {
             findSub.symbols.forEach((s) => {
                 findSub.fields.forEach((f) => {
-                    if (this.subscriptions[s]) {
-                        if (this.subscriptions[s][f].count <= 1) {
+                    if (this._subscriptions[s]) {
+                        if (this._subscriptions[s][f].count <= 1) {
                             if (unSubFields.indexOf(f) === -1) {
                                 unSubFields.push(f);
                                 unSubSymbols.push(s);
-                                delete this.subscriptions[s].callback[id];
+                                delete this._subscriptions[s].callback[id];
                             }
-                            this.subscriptions[s][f].count = 0;
+                            this._subscriptions[s][f].count = 0;
                         }
                         else {
-                            this.subscriptions[s][f].count =
-                                this.subscriptions[s][f].count - 1;
+                            this._subscriptions[s][f].count =
+                                this._subscriptions[s][f].count - 1;
                         }
                     }
                 });
@@ -281,10 +280,10 @@ export default class default_1 {
      * @param {any} data : socket data
      */
     static feedSubscriptions(data) {
-        if (this.subscriptions[data._i]) {
+        if (this._subscriptions[data._i]) {
             Object.keys(data).forEach((d) => {
-                if (this.subscriptions[data._i][d]) {
-                    this.subscriptions[data._i][d].val = data[d];
+                if (this._subscriptions[data._i][d]) {
+                    this._subscriptions[data._i][d].val = data[d];
                 }
             });
         }
@@ -294,16 +293,53 @@ export default class default_1 {
      * @param {any} data : socket data
      */
     static callback(data) {
-        if (this.subscriptions[data._i]) {
-            if (this.subscriptions[data._i].callback) {
-                if (this.subscriptions[data._i].callback) {
-                    for (let i = 0; i < Object.keys(this.subscriptions[data._i].callback).length; i++) {
-                        const callback = this.subscriptions[data._i].callback[Object.keys(this.subscriptions[data._i].callback)[i]];
-                        if (callback)
-                            callback(data);
-                    }
-                }
+        if (this._subscriptions[data._i] &&
+            this._subscriptions[data._i].callback &&
+            this._subscriptions[data._i].callback) {
+            for (let i = 0; i < Object.keys(this._subscriptions[data._i].callback).length; i++) {
+                const callback = this._subscriptions[data._i].callback[Object.keys(this._subscriptions[data._i].callback)[i]];
+                if (callback)
+                    callback(data);
             }
+        }
+    }
+    /**
+     * @description send message via socket
+     * @param {string} message : message
+     */
+    static messageEvent(message) {
+        switch (message._id) {
+            case 0:
+                break;
+            case 16:
+                break;
+            case 18:
+                this.login(this._options.username, this._options.password, this._options.resource);
+                break;
+            case 65:
+                // Same user logged in another location
+                if (message.result === 0) {
+                    console.log("message: Same user logged in another location");
+                    this._socket.close();
+                }
+                // start heartbeat
+                if (message.result === 100) {
+                    this.scheduleHeartbeat();
+                    this.reSubscribe();
+                }
+                // login failed
+                if (message.result === 101) {
+                    console.log("message: Socket Login Failed");
+                }
+                break;
+            case 1:
+                this.callback(message);
+                break;
+            case 67:
+                break;
+            default:
+                console.warn("Event message not mapped to any method. Message is : ", message);
+                break;
         }
     }
 }
