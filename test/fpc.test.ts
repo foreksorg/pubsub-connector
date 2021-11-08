@@ -1,5 +1,6 @@
-var { PubsubConnector } = require("../dist");
+import { PubsubConnector } from "../dist";
 
+let _ws: any;
 const options = {
   username: "test", // socket username
   password: "test", // socket password
@@ -10,14 +11,9 @@ const options = {
   reConnectInterval: 5000, // auto reconnect interval
 };
 
-PubsubConnector.connect(options)
-  .then((connection) => {
-    setTimeout(() => {
-      console.log("Login Status", PubsubConnector._isLogged);
-      process.exit(1);
-    }, 5000);
-  })
-  .catch((ex) => {
-    console.log(ex);
-    process.exit(1);
-  });
+test("TEsting Connection to pubsub", async () => {
+  _ws = await PubsubConnector.connect(options);
+  expect(_ws).toBeDefined();
+});
+
+afterAll(() => _ws.close());

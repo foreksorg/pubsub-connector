@@ -1,4 +1,4 @@
-import WebSocket from "ws";
+import { WebSocket } from "ws";
 import { PubSubConnectionOptions } from "./options";
 
 /**
@@ -8,8 +8,7 @@ export class PubsubConnector {
   static _socket: WebSocket;
   static _subscriptions: any = {};
   static _subscriptionsMap: any[] = [];
-  static _isLogged: boolean = false;
-  static _isLoginMessageSent: boolean = false;
+  static _isLogin: boolean = false;
   static _subId = 0;
   static _options: PubSubConnectionOptions;
 
@@ -17,7 +16,7 @@ export class PubsubConnector {
    * @description connect to socket
    * @param {PubSubConnectionOptions} options : options
    */
-  public static connect(options: PubSubConnectionOptions) {
+  public static connect(options: PubSubConnectionOptions): Promise<WebSocket> {
     this._options = options;
 
     return new Promise((resolve, reject) => {
@@ -45,7 +44,7 @@ export class PubsubConnector {
               _self.connect(options);
             }, options.reConnectInterval || 5000);
           };
-          if (!_self._isLogged && !_self._isLoginMessageSent) {
+          if (!_self._isLogin) {
             _self.login(options.username, options.password, options.resource);
           }
 
@@ -140,7 +139,6 @@ export class PubsubConnector {
         })
       );
     }
-    this._isLoginMessageSent = true;
   }
 
   /**

@@ -1,41 +1,36 @@
-"use strict";
+'use strict';
+
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PubsubConnector = void 0;
-const tslib_1 = require("tslib");
-const ws_1 = (0, tslib_1.__importDefault)(require("ws"));
-/**
- * @description Pubsub Socket Service provide connect socket and manage socket actions
- */
-class PubsubConnector {
-    /**
-     * @description connect to socket
-     * @param {PubSubConnectionOptions} options : options
-     */
-    static connect(options) {
+var ws_1 = require("ws");
+var PubsubConnector = (function () {
+    function PubsubConnector() {
+    }
+    PubsubConnector.connect = function (options) {
+        var _this = this;
         this._options = options;
-        return new Promise((resolve, reject) => {
-            const _self = this;
+        return new Promise(function (resolve, reject) {
+            var _self = _this;
             try {
-                let server = new ws_1.default(options.url);
+                var server = new ws_1.WebSocket(options.url);
                 _self._socket = server;
             }
             catch (ex) {
                 console.log(ex);
             }
             resolve(_self._socket);
-            // on server open
             if (_self._socket) {
                 _self._socket.onopen = function () {
-                    _self._socket.onmessage = (msg) => {
+                    _self._socket.onmessage = function (msg) {
                         _self.messageEvent(JSON.parse(msg.data));
                         _self.feedSubscriptions(JSON.parse(msg.data));
                     };
-                    _self._socket.onclose = () => {
-                        setTimeout(() => {
+                    _self._socket.onclose = function () {
+                        setTimeout(function () {
                             _self.connect(options);
                         }, options.reConnectInterval || 5000);
                     };
-                    if (!_self._isLogged && !_self._isLoginMessageSent) {
+                    if (!_self._isLogin) {
                         _self.login(options.username, options.password, options.resource);
                     }
                     if (options.isReconnection) {
@@ -43,9 +38,8 @@ class PubsubConnector {
                     }
                     resolve(_self._socket);
                 };
-                // on server error
                 _self._socket.onerror = function (err) {
-                    setTimeout(() => {
+                    setTimeout(function () {
                         if (options.autoReconnect) {
                             _self.connect(options);
                         }
@@ -54,49 +48,32 @@ class PubsubConnector {
                 };
             }
         });
-    }
-    /**
-     * @description is socket ready
-     * @return {boolean}
-     */
-    static isSocketReady() {
+    };
+    PubsubConnector.isSocketReady = function () {
         if (this._socket) {
-            return this._socket.readyState === ws_1.default.OPEN;
+            return this._socket.readyState === ws_1.WebSocket.OPEN;
         }
         else {
             return false;
         }
-    }
-    /**
-     * @description get subscription by id
-     * @param {string} id : id
-     */
-    static getSubscriptionsById(id) {
+    };
+    PubsubConnector.getSubscriptionsById = function (id) {
         if (this._subscriptions[id]) {
             return this._subscriptions[id];
         }
-    }
-    /**
-     * @description send message via socket
-     * @param {string} message : message
-     */
-    static send(message) {
+    };
+    PubsubConnector.send = function (message) {
+        var _this = this;
         if (this.isSocketReady()) {
             this._socket.send(message);
         }
         else {
-            setTimeout(() => {
-                this.send(message);
+            setTimeout(function () {
+                _this.send(message);
             }, 400);
         }
-    }
-    /**
-     * @description send login message to socket
-     * @param {string} username : username
-     * @param {string} password : password
-     * @param {string} resource : resource
-     */
-    static login(username, password, resource) {
+    };
+    PubsubConnector.login = function (username, password, resource) {
         if (this.isSocketReady()) {
             this.send(JSON.stringify({
                 _id: 64,
@@ -119,26 +96,16 @@ class PubsubConnector {
                 resource: resource,
             }));
         }
-        this._isLoginMessageSent = true;
-    }
-    /**
-     * @description schedule heart beat for socket service.
-     */
-    static scheduleHeartbeat() {
-        setInterval(() => {
-            this.send(JSON.stringify({
+    };
+    PubsubConnector.scheduleHeartbeat = function () {
+        var _this = this;
+        setInterval(function () {
+            _this.send(JSON.stringify({
                 _id: 16,
             }));
         }, 14000);
-    }
-    /**
-     * @description subscribe
-     * @param {string[]} symbols : symbols list
-     * @param {string[]} fields : fields list
-     * @param {Function} callback : callback method
-     * @returns {number} subscription id
-     */
-    static subscribe(symbols, fields, callback) {
+    };
+    PubsubConnector.subscribe = function (symbols, fields, callback) {
         if (!symbols[0]) {
             throw new Error("Symbol expired");
         }
@@ -158,108 +125,87 @@ class PubsubConnector {
         });
         this.addSubscriptions(this._subId, symbols, fields, callback);
         return this._subId;
-    }
-    /**
-     * @description check subscription has snapshot data if has sent it to pubsub sendData service
-     * @param {string[]} symbols : symbols list
-     * @param {string[]} fields : fields list
-     */
-    static checkSubscriptionHasSnapshot(symbols, fields) {
-        symbols.forEach((s) => {
-            fields.forEach((f) => {
-                if (this._subscriptions[s]) {
-                    if (this._subscriptions[s][f]) {
-                        if (this._subscriptions[s][f].val) {
-                            const sendData = { _id: 1, _s: 1, _i: "" };
+    };
+    PubsubConnector.checkSubscriptionHasSnapshot = function (symbols, fields) {
+        var _this = this;
+        symbols.forEach(function (s) {
+            fields.forEach(function (f) {
+                if (_this._subscriptions[s]) {
+                    if (_this._subscriptions[s][f]) {
+                        if (_this._subscriptions[s][f].val) {
+                            var sendData = { _id: 1, _s: 1, _i: "" };
                             sendData._i = s;
-                            sendData[f] = this._subscriptions[s][f].val;
-                            this.callback(sendData);
+                            sendData[f] = _this._subscriptions[s][f].val;
+                            _this.callback(sendData);
                         }
                     }
                 }
             });
         });
-    }
-    /**
-     * @description get field snapshot value if exsist
-     * @param {string} definitionId : definition id
-     * @param {string} fieldShortCode : fields shortcode
-     */
-    static getFieldSnapShotValue(definitionId, fieldShortCode) {
+    };
+    PubsubConnector.getFieldSnapShotValue = function (definitionId, fieldShortCode) {
         if (this._subscriptions[definitionId] &&
             this._subscriptions[definitionId][fieldShortCode] &&
             this._subscriptions[definitionId][fieldShortCode].val) {
             return this._subscriptions[definitionId][fieldShortCode].val;
         }
         return null;
-    }
-    /**
-     * @description check subscription has snapshot data if has sent it to pubsub sendData service
-     * @param {number} subId : subscription id
-     * @param {string[]} symbols : symbols list
-     * @param {string[]} fields : fields list
-     * @param {Function} callback : callback method
-     */
-    static addSubscriptions(subId, symbols, fields, callback) {
-        symbols.forEach((s) => {
-            if (!this._subscriptions[s]) {
-                this._subscriptions[s] = {};
-                this._subscriptions[s].callback = {};
+    };
+    PubsubConnector.addSubscriptions = function (subId, symbols, fields, callback) {
+        var _this = this;
+        symbols.forEach(function (s) {
+            if (!_this._subscriptions[s]) {
+                _this._subscriptions[s] = {};
+                _this._subscriptions[s].callback = {};
             }
-            this._subscriptions[s].callback[subId] = callback;
-            fields.forEach((f) => {
-                if (!this._subscriptions[s][f]) {
-                    this._subscriptions[s][f] = {};
-                    this._subscriptions[s][f].count = 1;
+            _this._subscriptions[s].callback[subId] = callback;
+            fields.forEach(function (f) {
+                if (!_this._subscriptions[s][f]) {
+                    _this._subscriptions[s][f] = {};
+                    _this._subscriptions[s][f].count = 1;
                 }
                 else {
-                    this._subscriptions[s][f].count = this._subscriptions[s][f].count + 1;
+                    _this._subscriptions[s][f].count = _this._subscriptions[s][f].count + 1;
                 }
             });
         });
-    }
-    /**
-     * @description re subscribe with old subscription map
-     */
-    static reSubscribe() {
+    };
+    PubsubConnector.reSubscribe = function () {
+        var _this = this;
         if (this.isSocketReady()) {
             this._subscriptions = {};
-            const tempSubMap = Object.assign([], this._subscriptionsMap);
+            var tempSubMap = Object.assign([], this._subscriptionsMap);
             this._subscriptionsMap = [];
-            tempSubMap.forEach((s) => {
-                this.subscribe(s.symbols, s.fields, s.callback);
+            tempSubMap.forEach(function (s) {
+                _this.subscribe(s.symbols, s.fields, s.callback);
             });
         }
-    }
-    /**
-     * @description unsubscribe with subscription id
-     * @param {number} id : subscription id
-     */
-    static unSubscribe(id) {
-        const findSub = this._subscriptionsMap.find((s) => s.id === id);
-        const unSubSymbols = [];
-        const unSubFields = [];
+    };
+    PubsubConnector.unSubscribe = function (id) {
+        var _this = this;
+        var findSub = this._subscriptionsMap.find(function (s) { return s.id === id; });
+        var unSubSymbols = [];
+        var unSubFields = [];
         if (findSub) {
-            findSub.symbols.forEach((s) => {
-                findSub.fields.forEach((f) => {
-                    if (this._subscriptions[s]) {
-                        if (this._subscriptions[s][f].count <= 1) {
+            findSub.symbols.forEach(function (s) {
+                findSub.fields.forEach(function (f) {
+                    if (_this._subscriptions[s]) {
+                        if (_this._subscriptions[s][f].count <= 1) {
                             if (unSubFields.indexOf(f) === -1) {
                                 unSubFields.push(f);
                                 unSubSymbols.push(s);
-                                delete this._subscriptions[s].callback[id];
+                                delete _this._subscriptions[s].callback[id];
                             }
-                            this._subscriptions[s][f].count = 0;
+                            _this._subscriptions[s][f].count = 0;
                         }
                         else {
-                            this._subscriptions[s][f].count =
-                                this._subscriptions[s][f].count - 1;
+                            _this._subscriptions[s][f].count =
+                                _this._subscriptions[s][f].count - 1;
                         }
                     }
                 });
             });
         }
-        // send unsubscibe message
         if (unSubSymbols.length > 0 || unSubFields.length > 0) {
             this.send(JSON.stringify({
                 _id: 2,
@@ -268,40 +214,29 @@ class PubsubConnector {
                 fields: unSubFields,
             }));
         }
-    }
-    /**
-     * @description feed subscriptions
-     * @param {any} data : socket data
-     */
-    static feedSubscriptions(data) {
+    };
+    PubsubConnector.feedSubscriptions = function (data) {
+        var _this = this;
         if (this._subscriptions[data._i]) {
-            Object.keys(data).forEach((d) => {
-                if (this._subscriptions[data._i][d]) {
-                    this._subscriptions[data._i][d].val = data[d];
+            Object.keys(data).forEach(function (d) {
+                if (_this._subscriptions[data._i][d]) {
+                    _this._subscriptions[data._i][d].val = data[d];
                 }
             });
         }
-    }
-    /**
-     * @description callback
-     * @param {any} data : socket data
-     */
-    static callback(data) {
+    };
+    PubsubConnector.callback = function (data) {
         if (this._subscriptions[data._i] &&
             this._subscriptions[data._i].callback &&
             this._subscriptions[data._i].callback) {
-            for (let i = 0; i < Object.keys(this._subscriptions[data._i].callback).length; i++) {
-                const callback = this._subscriptions[data._i].callback[Object.keys(this._subscriptions[data._i].callback)[i]];
+            for (var i = 0; i < Object.keys(this._subscriptions[data._i].callback).length; i++) {
+                var callback = this._subscriptions[data._i].callback[Object.keys(this._subscriptions[data._i].callback)[i]];
                 if (callback)
                     callback(data);
             }
         }
-    }
-    /**
-     * @description send message via socket
-     * @param {string} message : message
-     */
-    static messageEvent(message) {
+    };
+    PubsubConnector.messageEvent = function (message) {
         switch (message._id) {
             case 0:
                 break;
@@ -311,17 +246,14 @@ class PubsubConnector {
                 this.login(this._options.username, this._options.password, this._options.resource);
                 break;
             case 65:
-                // Same user logged in another location
                 if (message.result === 0) {
                     console.log("message: Same user logged in another location");
                     this._socket.close();
                 }
-                // start heartbeat
                 if (message.result === 100) {
                     this.scheduleHeartbeat();
                     this.reSubscribe();
                 }
-                // login failed
                 if (message.result === 101) {
                     console.log("message: Socket Login Failed");
                 }
@@ -335,12 +267,11 @@ class PubsubConnector {
                 console.warn("Event message not mapped to any method. Message is : ", message);
                 break;
         }
-    }
-}
+    };
+    PubsubConnector._subscriptions = {};
+    PubsubConnector._subscriptionsMap = [];
+    PubsubConnector._isLogin = false;
+    PubsubConnector._subId = 0;
+    return PubsubConnector;
+}());
 exports.PubsubConnector = PubsubConnector;
-PubsubConnector._subscriptions = {};
-PubsubConnector._subscriptionsMap = [];
-PubsubConnector._isLogged = false;
-PubsubConnector._isLoginMessageSent = false;
-PubsubConnector._subId = 0;
-//# sourceMappingURL=index.js.map

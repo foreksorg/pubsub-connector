@@ -1,23 +1,22 @@
 {
   "compilerOptions": {
-    "outDir": "dist",
+    "outDir": "./dist",
     "target": "ES6",
-    "module": "CommonJS",
-    "noImplicitAny": false,
+    "module": "commonjs",
     "strict": true,
-    "jsx": "preserve",
-    "importHelpers": true,
-    "allowJs": true,
-    "moduleResolution": "node",
-    "experimentalDecorators": true,
-    "strictPropertyInitialization": false,
-    "esModuleInterop": true,
+    "noImplicitAny": false,
     "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
-    "baseUrl": ".",
-    "types": ["node"],
-    "lib": ["es6", "dom"]
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "esModuleInterop": false,
+    "sourceMap": false,
+    "noEmitOnError": true,
+    "noEmit": true,
+    "declaration": true,
+    "moduleResolution": "node",
+    "types": ["node", "jest"],
+    "lib": ["ES6", "dom"]
   },
-  "include": ["./**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts", "./test/**/*"]
+  "include": ["./src/**/*.ts"],
+  "exclude": ["node_modules", "test"]
 }
