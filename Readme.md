@@ -3,20 +3,19 @@
   Foreks publisher subscriber connection class
 
 ```js
-import pubsubConnector  from 'pubsub-connector';
+import { PubsubConnector }  from 'pubsub-connector';
 
-const options: PubSubConnectionOptions = {
+const options = {
     username: '', // socket username
     password: '', // socket password
     resource: '', // socket resource
     url: '', // socket url
-    messageEvent: () => {} , // message event callback function
-    isReconnection: false // is reconnection default is false
-    autoReconnect: true // auto reconnect on error or on close 
+    isReconnection: false, // is reconnection default is false
+    autoReconnect: true, // auto reconnect on error or on close 
     reConnectInterval: 5000, // auto reconnect interval
 }
 
-await pubsubConnector.connect(options);
+PubsubConnector.connect(options);
 
 or 
 

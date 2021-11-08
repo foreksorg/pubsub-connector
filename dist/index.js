@@ -1,14 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PubsubConnector = void 0;
+const tslib_1 = require("tslib");
+const ws_1 = (0, tslib_1.__importDefault)(require("ws"));
 /**
  * @description Pubsub Socket Service provide connect socket and manage socket actions
  */
-export default class default_1 {
-    static _socket;
-    static _subscriptions = {};
-    static _subscriptionsMap = [];
-    static _isLogged = false;
-    static _isLoginMessageSent = false;
-    static _subId = 0;
-    static _options;
+class PubsubConnector {
     /**
      * @description connect to socket
      * @param {PubSubConnectionOptions} options : options
@@ -17,20 +15,17 @@ export default class default_1 {
         this._options = options;
         return new Promise((resolve, reject) => {
             const _self = this;
-            let server;
             try {
-                server = new WebSocket(options.url);
+                let server = new ws_1.default(options.url);
+                _self._socket = server;
             }
-            catch (e) {
-                setTimeout(() => {
-                    if (options.autoReconnect) {
-                        this.connect(options);
-                    }
-                }, options.reConnectInterval || 5000);
+            catch (ex) {
+                console.log(ex);
             }
+            resolve(_self._socket);
             // on server open
-            if (server) {
-                server.onopen = function () {
+            if (_self._socket) {
+                _self._socket.onopen = function () {
                     _self._socket.onmessage = (msg) => {
                         _self.messageEvent(JSON.parse(msg.data));
                         _self.feedSubscriptions(JSON.parse(msg.data));
@@ -46,10 +41,10 @@ export default class default_1 {
                     if (options.isReconnection) {
                         _self.reSubscribe();
                     }
-                    resolve(server);
+                    resolve(_self._socket);
                 };
                 // on server error
-                server.onerror = function (err) {
+                _self._socket.onerror = function (err) {
                     setTimeout(() => {
                         if (options.autoReconnect) {
                             _self.connect(options);
@@ -58,7 +53,6 @@ export default class default_1 {
                     reject(err);
                 };
             }
-            resolve(server);
         });
     }
     /**
@@ -67,7 +61,7 @@ export default class default_1 {
      */
     static isSocketReady() {
         if (this._socket) {
-            return this._socket.readyState === WebSocket.OPEN;
+            return this._socket.readyState === ws_1.default.OPEN;
         }
         else {
             return false;
@@ -343,4 +337,10 @@ export default class default_1 {
         }
     }
 }
+exports.PubsubConnector = PubsubConnector;
+PubsubConnector._subscriptions = {};
+PubsubConnector._subscriptionsMap = [];
+PubsubConnector._isLogged = false;
+PubsubConnector._isLoginMessageSent = false;
+PubsubConnector._subId = 0;
 //# sourceMappingURL=index.js.map

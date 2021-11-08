@@ -1,9 +1,10 @@
-import PubSubConnectionOptions from "./options";
+import WebSocket from "ws";
+import { PubSubConnectionOptions } from "./options";
 
 /**
  * @description Pubsub Socket Service provide connect socket and manage socket actions
  */
-export default class {
+export class PubsubConnector {
   static _socket: WebSocket;
   static _subscriptions: any = {};
   static _subscriptionsMap: any[] = [];
@@ -21,21 +22,19 @@ export default class {
 
     return new Promise((resolve, reject) => {
       const _self = this;
-      let server: WebSocket | undefined;
 
       try {
-        server = new WebSocket(options.url);
-      } catch (e) {
-        setTimeout(() => {
-          if (options.autoReconnect) {
-            this.connect(options);
-          }
-        }, options.reConnectInterval || 5000);
+        let server = new WebSocket(options.url);
+        _self._socket = server;
+      } catch (ex) {
+        console.log(ex);
       }
 
+      resolve(_self._socket);
+
       // on server open
-      if (server) {
-        server.onopen = function () {
+      if (_self._socket) {
+        _self._socket.onopen = function () {
           _self._socket.onmessage = (msg: any) => {
             _self.messageEvent(JSON.parse(msg.data));
             _self.feedSubscriptions(JSON.parse(msg.data));
@@ -54,11 +53,11 @@ export default class {
             _self.reSubscribe();
           }
 
-          resolve(server);
+          resolve(_self._socket);
         };
 
         // on server error
-        server.onerror = function (err) {
+        _self._socket.onerror = function (err) {
           setTimeout(() => {
             if (options.autoReconnect) {
               _self.connect(options);
@@ -67,8 +66,6 @@ export default class {
           reject(err);
         };
       }
-
-      resolve(server);
     });
   }
 

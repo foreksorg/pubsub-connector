@@ -1,11 +1,13 @@
 {
   "name": "foreks-pubsub-connector",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Foreks Pubsub Connection",
-  "main": "index.js",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "typings": "types/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "echo \"No test specified\""
+    "test": "node test/"
   },
   "repository": {
     "type": "git",
@@ -24,5 +26,10 @@
   "devDependencies": {
     "@types/node": "^16.11.6",
     "typescript": "^4.4.4"
+  },
+  "dependencies": {
+    "@types/ws": "^8.2.0",
+    "tslib": "^2.3.1",
+    "ws": "^8.2.3"
   }
 }

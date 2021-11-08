@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
+    "outDir": "dist",
+    "target": "ES6",
+    "module": "CommonJS",
     "noImplicitAny": false,
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
+    "allowJs": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
@@ -13,18 +15,9 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    },
-    "types": [ "node" ],
-    "lib": ["esnext","dom"]
+    "types": ["node"],
+    "lib": ["es6", "dom"]
   },
   "include": ["./**/*"],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts",
-    "**/*.test.*",
-    "./dist/**/*",
-    "../common/**/*test.*"
-  ]
+  "exclude": ["node_modules", "**/*.spec.ts", "./test/**/*"]
 }
