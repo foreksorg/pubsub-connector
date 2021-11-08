@@ -3,7 +3,6 @@ export default interface PubSubConnectionOptions {
     password: string,
     resource: string,
     url: string,
-    messageEvent: Function,
     isReconnection?: boolean,
     autoReconnect?: boolean,
     reConnectInterval?: number,
