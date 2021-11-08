@@ -1,5 +1,5 @@
 {
-  "name": "foreks-pubsub-socket",
+  "name": "@foreks/pubsub-connection",
   "version": "1.0.0",
   "description": "Foreks Pubsub Connection",
   "main": "index.js",
