@@ -1,4 +1,5 @@
 import IPubSubConnectionOptions from "./IPubSubConnectionOptions";
+import IPubsubConnector from "./IPubsubConnector";
 
 let { WebSocket } = require("ws");
 
@@ -10,7 +11,7 @@ if (typeof window !== "undefined") {
 /**
  * @description Pubsub Socket Service provide connect socket and manage socket actions
  */
-export default class PubsubConnector {
+export default class PubsubConnector implements IPubsubConnector {
   private socket!: WebSocket;
   private subscriptions: any = {};
   private subscriptionsMap: any[] = [];

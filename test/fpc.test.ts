@@ -1,7 +1,8 @@
 import PubsubConnector from "../dist";
+import IPubsubConnector from "../dist/IPubsubConnector";
 
 let _socket: WebSocket;
-let _connector: PubsubConnector;
+let _connector: IPubsubConnector;
 const options = {
   username: "test", // socket username
   password: "test", // socket password

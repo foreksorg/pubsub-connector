@@ -1,13 +1,4 @@
-import IPubSubConnectionOptions from "./IPubSubConnectionOptions";
-import IPubsubConnector from "./IPubsubConnector";
-export default class PubsubConnector implements IPubsubConnector {
-    private socket;
-    private subscriptions;
-    private subscriptionsMap;
-    private isLogin;
-    private subId;
-    private options;
-    constructor(options: IPubSubConnectionOptions);
+export default interface IPubsubConnector {
     getSocket(): WebSocket;
     connect(): Promise<WebSocket>;
     disconnect(): void;
