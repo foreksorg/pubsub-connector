@@ -1,5 +1,8 @@
+import IPubSubConnectionOptions from "./IPubSubConnectionOptions";
+
 let { WebSocket } = require("ws");
 
+// if browser use native socket
 if (typeof window !== "undefined") {
   WebSocket = window.WebSocket;
 }
@@ -7,62 +10,84 @@ if (typeof window !== "undefined") {
 /**
  * @description Pubsub Socket Service provide connect socket and manage socket actions
  */
-export default class {
-  static _socket: WebSocket;
-  static _subscriptions: any = {};
-  static _subscriptionsMap: any[] = [];
-  static _isLogin: boolean = false;
-  static _subId = 0;
-  static _options: PubSubConnectionOptions;
+export default class PubsubConnector {
+  private socket!: WebSocket;
+  private subscriptions: any = {};
+  private subscriptionsMap: any[] = [];
+  private isLogin: boolean = false;
+  private subId = 0;
+  private options: IPubSubConnectionOptions;
+
+  /**
+   * @description contructor
+   * @param {PubSubConnectionOptions} options : options
+   */
+  constructor(options: IPubSubConnectionOptions) {
+    this.options = options;
+  }
+
+  /**
+   * @description get socket connection
+   * @return {WebSocket}
+   */
+  public getSocket(): WebSocket {
+    return this.socket;
+  }
 
   /**
    * @description connect to socket
    * @param {PubSubConnectionOptions} options : options
    */
-  public static connect(options: PubSubConnectionOptions): Promise<WebSocket> {
-    this._options = options;
+  public connect(): Promise<WebSocket> {
+    const _self = this;
 
     return new Promise((resolve, reject) => {
-      const _self = this;
-
       try {
-        let server = new WebSocket(options.url);
-        _self._socket = server;
+        let server = new WebSocket(this.options.url);
+        _self.socket = server;
       } catch (ex) {
         console.log(ex);
+        setTimeout(() => {
+          _self.connect();
+        }, _self.options.reConnectInterval || 5000);
+        return;
       }
 
-      resolve(_self._socket);
+      resolve(_self.socket);
 
       // on server open
-      if (_self._socket) {
-        _self._socket.onopen = function () {
-          _self._socket.onmessage = (msg: any) => {
+      if (_self.socket) {
+        _self.socket.onopen = function () {
+          _self.socket.onmessage = (msg: any) => {
             _self.messageEvent(JSON.parse(msg.data));
             _self.feedSubscriptions(JSON.parse(msg.data));
           };
 
-          _self._socket.onclose = () => {
+          _self.socket.onclose = () => {
             setTimeout(() => {
-              _self.connect(options);
-            }, options.reConnectInterval || 5000);
+              _self.connect();
+            }, _self.options.reConnectInterval || 5000);
           };
-          if (!_self._isLogin) {
-            _self.login(options.username, options.password, options.resource);
+          if (!_self.isLogin) {
+            _self.login(
+              _self.options.username,
+              _self.options.password,
+              _self.options.resource
+            );
           }
 
-          if (options.isReconnection) {
+          if (_self.options.isReconnection) {
             _self.reSubscribe();
           }
 
-          resolve(_self._socket);
+          resolve(_self.socket);
         };
 
         // on server error
-        _self._socket.onerror = function (err) {
+        _self.socket.onerror = function (err) {
           setTimeout(() => {
-            if (options.autoReconnect) {
-              _self.connect(options);
+            if (_self.options.autoReconnect) {
+              _self.connect();
             }
           }, 5000);
           reject(err);
@@ -72,12 +97,19 @@ export default class {
   }
 
   /**
+   * @description disconnect from socket
+   */
+  public disconnect(): void {
+    this.socket.close();
+  }
+
+  /**
    * @description is socket ready
    * @return {boolean}
    */
-  public static isSocketReady(): boolean {
-    if (this._socket) {
-      return this._socket.readyState === WebSocket.OPEN;
+  public isSocketReady(): boolean {
+    if (this.socket) {
+      return this.socket.readyState === WebSocket.OPEN;
     } else {
       return false;
     }
@@ -87,9 +119,9 @@ export default class {
    * @description get subscription by id
    * @param {string} id : id
    */
-  public static getSubscriptionsById(id: string) {
-    if (this._subscriptions[id]) {
-      return this._subscriptions[id];
+  public getSubscriptionsById(id: string) {
+    if (this.subscriptions[id]) {
+      return this.subscriptions[id];
     }
   }
 
@@ -97,9 +129,9 @@ export default class {
    * @description send message via socket
    * @param {string} message : message
    */
-  public static send(message: string) {
+  public send(message: string) {
     if (this.isSocketReady()) {
-      this._socket.send(message);
+      this.socket.send(message);
     } else {
       setTimeout(() => {
         this.send(message);
@@ -113,11 +145,7 @@ export default class {
    * @param {string} password : password
    * @param {string} resource : resource
    */
-  public static login(
-    username: string,
-    password: string,
-    resource: string
-  ): void {
+  public login(username: string, password: string, resource: string): void {
     if (this.isSocketReady()) {
       this.send(
         JSON.stringify({
@@ -147,7 +175,7 @@ export default class {
   /**
    * @description schedule heart beat for socket service.
    */
-  public static scheduleHeartbeat(): void {
+  public scheduleHeartbeat(): void {
     setInterval(() => {
       this.send(
         JSON.stringify({
@@ -164,7 +192,7 @@ export default class {
    * @param {Function} callback : callback method
    * @returns {number} subscription id
    */
-  public static subscribe(
+  public subscribe(
     symbols: string[],
     fields: string[],
     callback?: (data: any) => any
@@ -172,28 +200,28 @@ export default class {
     if (!symbols[0]) {
       throw new Error("Symbol expired");
     }
-    this._subId = this._subId + 1;
+    this.subId = this.subId + 1;
     this.checkSubscriptionHasSnapshot(symbols, fields);
 
     this.send(
       JSON.stringify({
         _id: 1,
-        id: this._subId,
+        id: this.subId,
         symbols: symbols,
         fields: fields,
       })
     );
 
-    this._subscriptionsMap.push({
-      id: this._subId,
+    this.subscriptionsMap.push({
+      id: this.subId,
       symbols: symbols,
       fields: fields,
       callback: callback,
     });
 
-    this.addSubscriptions(this._subId, symbols, fields, callback);
+    this.addSubscriptions(this.subId, symbols, fields, callback);
 
-    return this._subId;
+    return this.subId;
   }
 
   /**
@@ -201,21 +229,18 @@ export default class {
    * @param {string[]} symbols : symbols list
    * @param {string[]} fields : fields list
    */
-  public static checkSubscriptionHasSnapshot(
-    symbols: string[],
-    fields: string[]
-  ) {
+  public checkSubscriptionHasSnapshot(symbols: string[], fields: string[]) {
     symbols.forEach((s) => {
       fields.forEach((f) => {
-        if (this._subscriptions[s]) {
-          if (this._subscriptions[s][f]) {
-            if (this._subscriptions[s][f].val) {
-              const sendData = { _id: 1, _s: 1, _i: "" };
-              sendData._i = s;
-              sendData[f] = this._subscriptions[s][f].val;
-              this.callback(sendData);
-            }
-          }
+        if (
+          this.subscriptions[s] &&
+          this.subscriptions[s][f] &&
+          this.subscriptions[s][f].val
+        ) {
+          const sendData = { _id: 1, _s: 1, _i: "" };
+          sendData._i = s;
+          sendData[f] = this.subscriptions[s][f].val;
+          this.callback(sendData);
         }
       });
     });
@@ -226,16 +251,16 @@ export default class {
    * @param {string} definitionId : definition id
    * @param {string} fieldShortCode : fields shortcode
    */
-  public static getFieldSnapShotValue(
+  public getFieldSnapShotValue(
     definitionId: string,
     fieldShortCode: string
   ): any | null {
     if (
-      this._subscriptions[definitionId] &&
-      this._subscriptions[definitionId][fieldShortCode] &&
-      this._subscriptions[definitionId][fieldShortCode].val
+      this.subscriptions[definitionId] &&
+      this.subscriptions[definitionId][fieldShortCode] &&
+      this.subscriptions[definitionId][fieldShortCode].val
     ) {
-      return this._subscriptions[definitionId][fieldShortCode].val;
+      return this.subscriptions[definitionId][fieldShortCode].val;
     }
     return null;
   }
@@ -247,26 +272,26 @@ export default class {
    * @param {string[]} fields : fields list
    * @param {Function} callback : callback method
    */
-  public static addSubscriptions(
+  public addSubscriptions(
     subId: number,
     symbols: string[],
     fields: string[],
     callback?: (data: any) => any
   ): void {
     symbols.forEach((s) => {
-      if (!this._subscriptions[s]) {
-        this._subscriptions[s] = {};
-        this._subscriptions[s].callback = {};
+      if (!this.subscriptions[s]) {
+        this.subscriptions[s] = {};
+        this.subscriptions[s].callback = {};
       }
 
-      this._subscriptions[s].callback[subId] = callback;
+      this.subscriptions[s].callback[subId] = callback;
 
       fields.forEach((f) => {
-        if (!this._subscriptions[s][f]) {
-          this._subscriptions[s][f] = {};
-          this._subscriptions[s][f].count = 1;
+        if (!this.subscriptions[s][f]) {
+          this.subscriptions[s][f] = {};
+          this.subscriptions[s][f].count = 1;
         } else {
-          this._subscriptions[s][f].count = this._subscriptions[s][f].count + 1;
+          this.subscriptions[s][f].count = this.subscriptions[s][f].count + 1;
         }
       });
     });
@@ -275,11 +300,11 @@ export default class {
   /**
    * @description re subscribe with old subscription map
    */
-  public static reSubscribe(): void {
+  public reSubscribe(): void {
     if (this.isSocketReady()) {
-      this._subscriptions = {};
-      const tempSubMap = Object.assign([], this._subscriptionsMap);
-      this._subscriptionsMap = [];
+      this.subscriptions = {};
+      const tempSubMap = Object.assign([], this.subscriptionsMap);
+      this.subscriptionsMap = [];
       tempSubMap.forEach((s: any) => {
         this.subscribe(s.symbols, s.fields, s.callback);
       });
@@ -290,24 +315,24 @@ export default class {
    * @description unsubscribe with subscription id
    * @param {number} id : subscription id
    */
-  public static unSubscribe(id: number): void {
-    const findSub = this._subscriptionsMap.find((s) => s.id === id);
+  public unSubscribe(id: number): void {
+    const findSub = this.subscriptionsMap.find((s) => s.id === id);
     const unSubSymbols: string[] = [];
     const unSubFields: string[] = [];
     if (findSub) {
       findSub.symbols.forEach((s) => {
         findSub.fields.forEach((f) => {
-          if (this._subscriptions[s]) {
-            if (this._subscriptions[s][f].count <= 1) {
+          if (this.subscriptions[s]) {
+            if (this.subscriptions[s][f].count <= 1) {
               if (unSubFields.indexOf(f) === -1) {
                 unSubFields.push(f);
                 unSubSymbols.push(s);
-                delete this._subscriptions[s].callback[id];
+                delete this.subscriptions[s].callback[id];
               }
-              this._subscriptions[s][f].count = 0;
+              this.subscriptions[s][f].count = 0;
             } else {
-              this._subscriptions[s][f].count =
-                this._subscriptions[s][f].count - 1;
+              this.subscriptions[s][f].count =
+                this.subscriptions[s][f].count - 1;
             }
           }
         });
@@ -331,11 +356,11 @@ export default class {
    * @description feed subscriptions
    * @param {any} data : socket data
    */
-  public static feedSubscriptions(data: any): void {
-    if (this._subscriptions[data._i]) {
+  public feedSubscriptions(data: any): void {
+    if (this.subscriptions[data._i]) {
       Object.keys(data).forEach((d) => {
-        if (this._subscriptions[data._i][d]) {
-          this._subscriptions[data._i][d].val = data[d];
+        if (this.subscriptions[data._i][d]) {
+          this.subscriptions[data._i][d].val = data[d];
         }
       });
     }
@@ -345,20 +370,20 @@ export default class {
    * @description callback
    * @param {any} data : socket data
    */
-  public static callback(data: any): void {
+  public callback(data: any): void {
     if (
-      this._subscriptions[data._i] &&
-      this._subscriptions[data._i].callback &&
-      this._subscriptions[data._i].callback
+      this.subscriptions[data._i] &&
+      this.subscriptions[data._i].callback &&
+      this.subscriptions[data._i].callback
     ) {
       for (
         let i = 0;
-        i < Object.keys(this._subscriptions[data._i].callback).length;
+        i < Object.keys(this.subscriptions[data._i].callback).length;
         i++
       ) {
         const callback =
-          this._subscriptions[data._i].callback[
-            Object.keys(this._subscriptions[data._i].callback)[i]
+          this.subscriptions[data._i].callback[
+            Object.keys(this.subscriptions[data._i].callback)[i]
           ];
         if (callback) callback(data);
       }
@@ -369,7 +394,7 @@ export default class {
    * @description send message via socket
    * @param {string} message : message
    */
-  public static messageEvent(message: any) {
+  public messageEvent(message: any) {
     switch (message._id) {
       case 0:
         break;
@@ -377,16 +402,16 @@ export default class {
         break;
       case 18:
         this.login(
-          this._options.username,
-          this._options.password,
-          this._options.resource
+          this.options.username,
+          this.options.password,
+          this.options.resource
         );
         break;
       case 65:
         // Same user logged in another location
         if (message.result === 0) {
           console.log("message: Same user logged in another location");
-          this._socket.close();
+          this.socket.close();
         }
         // start heartbeat
         if (message.result === 100) {
@@ -411,50 +436,4 @@ export default class {
         break;
     }
   }
-}
-
-export interface Connector {
-  _socket: WebSocket;
-  _subscriptions: any;
-  _subscriptionsMap: any[];
-  _isLogin: boolean;
-  _subId: number;
-  _options: PubSubConnectionOptions;
-  connect(options: PubSubConnectionOptions): Promise<WebSocket>;
-  isSocketReady(): boolean;
-  getSubscriptionsById(id: string): any;
-  send(message: string): void;
-  login(username: string, password: string, resource: string): void;
-  scheduleHeartbeat(): void;
-  subscribe(
-    symbols: string[],
-    fields: string[],
-    callback?: (data: any) => any
-  ): number;
-  checkSubscriptionHasSnapshot(symbols: string[], fields: string[]): void;
-  getFieldSnapShotValue(
-    definitionId: string,
-    fieldShortCode: string
-  ): any | null;
-  addSubscriptions(
-    subId: number,
-    symbols: string[],
-    fields: string[],
-    callback?: (data: any) => any
-  ): void;
-  reSubscribe(): void;
-  unSubscribe(id: number): void;
-  feedSubscriptions(data: any): void;
-  callback(data: any): void;
-  messageEvent(message: any): void;
-}
-
-export interface PubSubConnectionOptions {
-  username: string;
-  password: string;
-  resource: string;
-  url: string;
-  isReconnection?: boolean;
-  autoReconnect?: boolean;
-  reConnectInterval?: number;
 }

@@ -1,6 +1,7 @@
 import PubsubConnector from "../dist";
 
-let _ws: any;
+let _socket: WebSocket;
+let _connector: PubsubConnector;
 const options = {
   username: "test", // socket username
   password: "test", // socket password
@@ -11,9 +12,24 @@ const options = {
   reConnectInterval: 5000, // auto reconnect interval
 };
 
-test("TEsting Connection to pubsub", async () => {
-  _ws = await PubsubConnector.connect(options);
-  expect(_ws).toBeDefined();
+beforeAll(async () => {
+  _connector = new PubsubConnector(options);
+  _socket = await _connector.connect();
 });
 
-afterAll(() => _ws.close());
+test("Testing connection subscribe ready state", () => {
+  _connector.subscribe(["o17"], ["l"]);
+  expect(_connector.getSubscriptionsById("o17")).toBeDefined();
+});
+
+test("Testing disconnection", () => {
+  _connector.disconnect();
+  expect(_socket.readyState).toBe(2);
+  setTimeout(() => {
+    expect(_socket.readyState).toEqual(3);
+  }, 1500);
+});
+
+afterAll((done) => {
+  done();
+});

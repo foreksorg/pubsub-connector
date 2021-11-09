@@ -1,4 +1,4 @@
-export interface PubSubConnectionOptions {
+export default interface IPubSubConnectionOptions {
     username: string;
     password: string;
     resource: string;

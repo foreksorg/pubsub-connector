@@ -5,45 +5,56 @@ var WebSocket = require("ws").WebSocket;
 if (typeof window !== "undefined") {
     WebSocket = window.WebSocket;
 }
-var default_1 = (function () {
-    function default_1() {
+var PubsubConnector = (function () {
+    function PubsubConnector(options) {
+        this.subscriptions = {};
+        this.subscriptionsMap = [];
+        this.isLogin = false;
+        this.subId = 0;
+        this.options = options;
     }
-    default_1.connect = function (options) {
+    PubsubConnector.prototype.getSocket = function () {
+        return this.socket;
+    };
+    PubsubConnector.prototype.connect = function () {
         var _this = this;
-        this._options = options;
+        var _self = this;
         return new Promise(function (resolve, reject) {
-            var _self = _this;
             try {
-                var server = new WebSocket(options.url);
-                _self._socket = server;
+                var server = new WebSocket(_this.options.url);
+                _self.socket = server;
             }
             catch (ex) {
                 console.log(ex);
+                setTimeout(function () {
+                    _self.connect();
+                }, _self.options.reConnectInterval || 5000);
+                return;
             }
-            resolve(_self._socket);
-            if (_self._socket) {
-                _self._socket.onopen = function () {
-                    _self._socket.onmessage = function (msg) {
+            resolve(_self.socket);
+            if (_self.socket) {
+                _self.socket.onopen = function () {
+                    _self.socket.onmessage = function (msg) {
                         _self.messageEvent(JSON.parse(msg.data));
                         _self.feedSubscriptions(JSON.parse(msg.data));
                     };
-                    _self._socket.onclose = function () {
+                    _self.socket.onclose = function () {
                         setTimeout(function () {
-                            _self.connect(options);
-                        }, options.reConnectInterval || 5000);
+                            _self.connect();
+                        }, _self.options.reConnectInterval || 5000);
                     };
-                    if (!_self._isLogin) {
-                        _self.login(options.username, options.password, options.resource);
+                    if (!_self.isLogin) {
+                        _self.login(_self.options.username, _self.options.password, _self.options.resource);
                     }
-                    if (options.isReconnection) {
+                    if (_self.options.isReconnection) {
                         _self.reSubscribe();
                     }
-                    resolve(_self._socket);
+                    resolve(_self.socket);
                 };
-                _self._socket.onerror = function (err) {
+                _self.socket.onerror = function (err) {
                     setTimeout(function () {
-                        if (options.autoReconnect) {
-                            _self.connect(options);
+                        if (_self.options.autoReconnect) {
+                            _self.connect();
                         }
                     }, 5000);
                     reject(err);
@@ -51,23 +62,26 @@ var default_1 = (function () {
             }
         });
     };
-    default_1.isSocketReady = function () {
-        if (this._socket) {
-            return this._socket.readyState === WebSocket.OPEN;
+    PubsubConnector.prototype.disconnect = function () {
+        this.socket.close();
+    };
+    PubsubConnector.prototype.isSocketReady = function () {
+        if (this.socket) {
+            return this.socket.readyState === WebSocket.OPEN;
         }
         else {
             return false;
         }
     };
-    default_1.getSubscriptionsById = function (id) {
-        if (this._subscriptions[id]) {
-            return this._subscriptions[id];
+    PubsubConnector.prototype.getSubscriptionsById = function (id) {
+        if (this.subscriptions[id]) {
+            return this.subscriptions[id];
         }
     };
-    default_1.send = function (message) {
+    PubsubConnector.prototype.send = function (message) {
         var _this = this;
         if (this.isSocketReady()) {
-            this._socket.send(message);
+            this.socket.send(message);
         }
         else {
             setTimeout(function () {
@@ -75,7 +89,7 @@ var default_1 = (function () {
             }, 400);
         }
     };
-    default_1.login = function (username, password, resource) {
+    PubsubConnector.prototype.login = function (username, password, resource) {
         if (this.isSocketReady()) {
             this.send(JSON.stringify({
                 _id: 64,
@@ -99,7 +113,7 @@ var default_1 = (function () {
             }));
         }
     };
-    default_1.scheduleHeartbeat = function () {
+    PubsubConnector.prototype.scheduleHeartbeat = function () {
         var _this = this;
         setInterval(function () {
             _this.send(JSON.stringify({
@@ -107,102 +121,100 @@ var default_1 = (function () {
             }));
         }, 14000);
     };
-    default_1.subscribe = function (symbols, fields, callback) {
+    PubsubConnector.prototype.subscribe = function (symbols, fields, callback) {
         if (!symbols[0]) {
             throw new Error("Symbol expired");
         }
-        this._subId = this._subId + 1;
+        this.subId = this.subId + 1;
         this.checkSubscriptionHasSnapshot(symbols, fields);
         this.send(JSON.stringify({
             _id: 1,
-            id: this._subId,
+            id: this.subId,
             symbols: symbols,
             fields: fields,
         }));
-        this._subscriptionsMap.push({
-            id: this._subId,
+        this.subscriptionsMap.push({
+            id: this.subId,
             symbols: symbols,
             fields: fields,
             callback: callback,
         });
-        this.addSubscriptions(this._subId, symbols, fields, callback);
-        return this._subId;
+        this.addSubscriptions(this.subId, symbols, fields, callback);
+        return this.subId;
     };
-    default_1.checkSubscriptionHasSnapshot = function (symbols, fields) {
+    PubsubConnector.prototype.checkSubscriptionHasSnapshot = function (symbols, fields) {
         var _this = this;
         symbols.forEach(function (s) {
             fields.forEach(function (f) {
-                if (_this._subscriptions[s]) {
-                    if (_this._subscriptions[s][f]) {
-                        if (_this._subscriptions[s][f].val) {
-                            var sendData = { _id: 1, _s: 1, _i: "" };
-                            sendData._i = s;
-                            sendData[f] = _this._subscriptions[s][f].val;
-                            _this.callback(sendData);
-                        }
-                    }
+                if (_this.subscriptions[s] &&
+                    _this.subscriptions[s][f] &&
+                    _this.subscriptions[s][f].val) {
+                    var sendData = { _id: 1, _s: 1, _i: "" };
+                    sendData._i = s;
+                    sendData[f] = _this.subscriptions[s][f].val;
+                    _this.callback(sendData);
                 }
             });
         });
     };
-    default_1.getFieldSnapShotValue = function (definitionId, fieldShortCode) {
-        if (this._subscriptions[definitionId] &&
-            this._subscriptions[definitionId][fieldShortCode] &&
-            this._subscriptions[definitionId][fieldShortCode].val) {
-            return this._subscriptions[definitionId][fieldShortCode].val;
+    PubsubConnector.prototype.getFieldSnapShotValue = function (definitionId, fieldShortCode) {
+        if (this.subscriptions[definitionId] &&
+            this.subscriptions[definitionId][fieldShortCode] &&
+            this.subscriptions[definitionId][fieldShortCode].val) {
+            return this.subscriptions[definitionId][fieldShortCode].val;
         }
         return null;
     };
-    default_1.addSubscriptions = function (subId, symbols, fields, callback) {
+    PubsubConnector.prototype.addSubscriptions = function (subId, symbols, fields, callback) {
         var _this = this;
         symbols.forEach(function (s) {
-            if (!_this._subscriptions[s]) {
-                _this._subscriptions[s] = {};
-                _this._subscriptions[s].callback = {};
+            if (!_this.subscriptions[s]) {
+                _this.subscriptions[s] = {};
+                _this.subscriptions[s].callback = {};
             }
-            _this._subscriptions[s].callback[subId] = callback;
+            _this.subscriptions[s].callback[subId] = callback;
             fields.forEach(function (f) {
-                if (!_this._subscriptions[s][f]) {
-                    _this._subscriptions[s][f] = {};
-                    _this._subscriptions[s][f].count = 1;
+                if (!_this.subscriptions[s][f]) {
+                    _this.subscriptions[s][f] = {};
+                    _this.subscriptions[s][f].count = 1;
                 }
                 else {
-                    _this._subscriptions[s][f].count = _this._subscriptions[s][f].count + 1;
+                    _this.subscriptions[s][f].count = _this.subscriptions[s][f].count + 1;
                 }
             });
         });
     };
-    default_1.reSubscribe = function () {
+    PubsubConnector.prototype.reSubscribe = function () {
         var _this = this;
         if (this.isSocketReady()) {
-            this._subscriptions = {};
-            var tempSubMap = Object.assign([], this._subscriptionsMap);
-            this._subscriptionsMap = [];
+            this.subscriptions = {};
+            var tempSubMap = Object.assign([], this.subscriptionsMap);
+            this.subscriptionsMap = [];
             tempSubMap.forEach(function (s) {
                 _this.subscribe(s.symbols, s.fields, s.callback);
             });
         }
     };
-    default_1.unSubscribe = function (id) {
+    PubsubConnector.prototype.unSubscribe = function (id) {
         var _this = this;
-        var findSub = this._subscriptionsMap.find(function (s) { return s.id === id; });
+        var findSub = this.subscriptionsMap.find(function (s) { return s.id === id; });
         var unSubSymbols = [];
         var unSubFields = [];
         if (findSub) {
             findSub.symbols.forEach(function (s) {
                 findSub.fields.forEach(function (f) {
-                    if (_this._subscriptions[s]) {
-                        if (_this._subscriptions[s][f].count <= 1) {
+                    if (_this.subscriptions[s]) {
+                        if (_this.subscriptions[s][f].count <= 1) {
                             if (unSubFields.indexOf(f) === -1) {
                                 unSubFields.push(f);
                                 unSubSymbols.push(s);
-                                delete _this._subscriptions[s].callback[id];
+                                delete _this.subscriptions[s].callback[id];
                             }
-                            _this._subscriptions[s][f].count = 0;
+                            _this.subscriptions[s][f].count = 0;
                         }
                         else {
-                            _this._subscriptions[s][f].count =
-                                _this._subscriptions[s][f].count - 1;
+                            _this.subscriptions[s][f].count =
+                                _this.subscriptions[s][f].count - 1;
                         }
                     }
                 });
@@ -217,40 +229,40 @@ var default_1 = (function () {
             }));
         }
     };
-    default_1.feedSubscriptions = function (data) {
+    PubsubConnector.prototype.feedSubscriptions = function (data) {
         var _this = this;
-        if (this._subscriptions[data._i]) {
+        if (this.subscriptions[data._i]) {
             Object.keys(data).forEach(function (d) {
-                if (_this._subscriptions[data._i][d]) {
-                    _this._subscriptions[data._i][d].val = data[d];
+                if (_this.subscriptions[data._i][d]) {
+                    _this.subscriptions[data._i][d].val = data[d];
                 }
             });
         }
     };
-    default_1.callback = function (data) {
-        if (this._subscriptions[data._i] &&
-            this._subscriptions[data._i].callback &&
-            this._subscriptions[data._i].callback) {
-            for (var i = 0; i < Object.keys(this._subscriptions[data._i].callback).length; i++) {
-                var callback = this._subscriptions[data._i].callback[Object.keys(this._subscriptions[data._i].callback)[i]];
+    PubsubConnector.prototype.callback = function (data) {
+        if (this.subscriptions[data._i] &&
+            this.subscriptions[data._i].callback &&
+            this.subscriptions[data._i].callback) {
+            for (var i = 0; i < Object.keys(this.subscriptions[data._i].callback).length; i++) {
+                var callback = this.subscriptions[data._i].callback[Object.keys(this.subscriptions[data._i].callback)[i]];
                 if (callback)
                     callback(data);
             }
         }
     };
-    default_1.messageEvent = function (message) {
+    PubsubConnector.prototype.messageEvent = function (message) {
         switch (message._id) {
             case 0:
                 break;
             case 16:
                 break;
             case 18:
-                this.login(this._options.username, this._options.password, this._options.resource);
+                this.login(this.options.username, this.options.password, this.options.resource);
                 break;
             case 65:
                 if (message.result === 0) {
                     console.log("message: Same user logged in another location");
-                    this._socket.close();
+                    this.socket.close();
                 }
                 if (message.result === 100) {
                     this.scheduleHeartbeat();
@@ -270,10 +282,6 @@ var default_1 = (function () {
                 break;
         }
     };
-    default_1._subscriptions = {};
-    default_1._subscriptionsMap = [];
-    default_1._isLogin = false;
-    default_1._subId = 0;
-    return default_1;
+    return PubsubConnector;
 }());
-exports.default = default_1;
+exports.default = PubsubConnector;

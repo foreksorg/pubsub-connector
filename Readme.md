@@ -3,12 +3,13 @@
 Foreks publisher subscriber connection class
 
 ## Installation
+
 ```bash
 $ npm i pubsub-connector -s
 ```
 
 ```js
-import { PubsubConnector } from "foreks-pubsub-connector";
+import PubsubConnector from "foreks-pubsub-connector";
 
 const options = {
   username: "", // socket username
@@ -20,9 +21,14 @@ const options = {
   reConnectInterval: 5000, // auto reconnect interval
 };
 
-PubsubConnector.connect(options);
+const connector = new PubsubConnector(options);
+await connector.connect();
+connector.subscribe(["o17"], ["l"]);
 
-or;
+// or you can use
 
-pubsubConnector.connect(options).then((socket) => {});
+const connector = new PubsubConnector(options);
+connector.connect(options).then(() => {
+  connector.subscribe(["o17"], ["l"]);
+});
 ```
