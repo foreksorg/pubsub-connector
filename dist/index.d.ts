@@ -1,4 +1,3 @@
-import { WebSocket } from "ws";
 export default class {
     static _socket: WebSocket;
     static _subscriptions: any;

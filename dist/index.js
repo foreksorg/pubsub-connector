@@ -1,7 +1,10 @@
 'use strict';
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var ws_1 = require("ws");
+var WebSocket = require("ws").WebSocket;
+if (typeof window !== "undefined") {
+    WebSocket = window.WebSocket;
+}
 var default_1 = (function () {
     function default_1() {
     }
@@ -11,7 +14,7 @@ var default_1 = (function () {
         return new Promise(function (resolve, reject) {
             var _self = _this;
             try {
-                var server = new ws_1.WebSocket(options.url);
+                var server = new WebSocket(options.url);
                 _self._socket = server;
             }
             catch (ex) {
@@ -50,7 +53,7 @@ var default_1 = (function () {
     };
     default_1.isSocketReady = function () {
         if (this._socket) {
-            return this._socket.readyState === ws_1.WebSocket.OPEN;
+            return this._socket.readyState === WebSocket.OPEN;
         }
         else {
             return false;

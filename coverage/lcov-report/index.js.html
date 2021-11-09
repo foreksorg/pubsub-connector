@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">24.67% </span>
+                <span class="strong">24.51% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>38/154</span>
+                <span class='fraction'>38/155</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">1.17% </span>
+                <span class="strong">2.29% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>1/85</span>
+                <span class='fraction'>2/87</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">25% </span>
+                <span class="strong">24.83% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>38/152</span>
+                <span class='fraction'>38/153</span>
             </div>
         
             
@@ -334,11 +334,15 @@
 <a name='L275'></a><a href='#L275'>275</a>
 <a name='L276'></a><a href='#L276'>276</a>
 <a name='L277'></a><a href='#L277'>277</a>
-<a name='L278'></a><a href='#L278'>278</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L278'></a><a href='#L278'>278</a>
+<a name='L279'></a><a href='#L279'>279</a>
+<a name='L280'></a><a href='#L280'>280</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -614,18 +618,20 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">'use strict';
 &nbsp;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PubsubConnector = void 0;
-var ws_1 = require("ws");
-var PubsubConnector = (function () {
-    function <span class="fstat-no" title="function not covered" >PubsubConnector(</span>) {
+var WebSocket = require("ws").WebSocket;
+<span class="missing-if-branch" title="if path not taken" >I</span>if (typeof window !== "undefined") {
+<span class="cstat-no" title="statement not covered" >    WebSocket = window.WebSocket;</span>
+}
+var default_1 = (function () {
+    function <span class="fstat-no" title="function not covered" >default_1(</span>) {
     }
-    PubsubConnector.connect = function (options) {
+    default_1.connect = function (options) {
         var _this = this;
         this._options = options;
         return new Promise(function (resolve, reject) {
             var _self = _this;
             try {
-                var server = new ws_1.WebSocket(options.url);
+                var server = new WebSocket(options.url);
                 _self._socket = server;
             }
             catch (ex) {
@@ -662,20 +668,20 @@ var PubsubConnector = (function () {
             }
         });
     };
-    PubsubConnector.isSocketReady = <span class="fstat-no" title="function not covered" >fu</span>nction () {
+    default_1.isSocketReady = <span class="fstat-no" title="function not covered" >fu</span>nction () {
 <span class="cstat-no" title="statement not covered" >        if (this._socket) {</span>
-<span class="cstat-no" title="statement not covered" >            return this._socket.readyState === ws_1.WebSocket.OPEN;</span>
+<span class="cstat-no" title="statement not covered" >            return this._socket.readyState === WebSocket.OPEN;</span>
         }
         else {
 <span class="cstat-no" title="statement not covered" >            return false;</span>
         }
     };
-    PubsubConnector.getSubscriptionsById = <span class="fstat-no" title="function not covered" >fu</span>nction (id) {
+    default_1.getSubscriptionsById = <span class="fstat-no" title="function not covered" >fu</span>nction (id) {
 <span class="cstat-no" title="statement not covered" >        if (this._subscriptions[id]) {</span>
 <span class="cstat-no" title="statement not covered" >            return this._subscriptions[id];</span>
         }
     };
-    PubsubConnector.send = <span class="fstat-no" title="function not covered" >fu</span>nction (message) {
+    default_1.send = <span class="fstat-no" title="function not covered" >fu</span>nction (message) {
         var _this = <span class="cstat-no" title="statement not covered" >this;</span>
 <span class="cstat-no" title="statement not covered" >        if (this.isSocketReady()) {</span>
 <span class="cstat-no" title="statement not covered" >            this._socket.send(message);</span>
@@ -686,7 +692,7 @@ var PubsubConnector = (function () {
             }, 400);
         }
     };
-    PubsubConnector.login = <span class="fstat-no" title="function not covered" >fu</span>nction (username, password, resource) {
+    default_1.login = <span class="fstat-no" title="function not covered" >fu</span>nction (username, password, resource) {
 <span class="cstat-no" title="statement not covered" >        if (this.isSocketReady()) {</span>
 <span class="cstat-no" title="statement not covered" >            this.send(JSON.stringify({</span>
                 _id: 64,
@@ -710,7 +716,7 @@ var PubsubConnector = (function () {
             }));
         }
     };
-    PubsubConnector.scheduleHeartbeat = <span class="fstat-no" title="function not covered" >fu</span>nction () {
+    default_1.scheduleHeartbeat = <span class="fstat-no" title="function not covered" >fu</span>nction () {
         var _this = <span class="cstat-no" title="statement not covered" >this;</span>
 <span class="cstat-no" title="statement not covered" >        setInterval(<span class="fstat-no" title="function not covered" >fu</span>nction () {</span>
 <span class="cstat-no" title="statement not covered" >            _this.send(JSON.stringify({</span>
@@ -718,7 +724,7 @@ var PubsubConnector = (function () {
             }));
         }, 14000);
     };
-    PubsubConnector.subscribe = <span class="fstat-no" title="function not covered" >fu</span>nction (symbols, fields, callback) {
+    default_1.subscribe = <span class="fstat-no" title="function not covered" >fu</span>nction (symbols, fields, callback) {
 <span class="cstat-no" title="statement not covered" >        if (!symbols[0]) {</span>
 <span class="cstat-no" title="statement not covered" >            throw new Error("Symbol expired");</span>
         }
@@ -739,7 +745,7 @@ var PubsubConnector = (function () {
 <span class="cstat-no" title="statement not covered" >        this.addSubscriptions(this._subId, symbols, fields, callback);</span>
 <span class="cstat-no" title="statement not covered" >        return this._subId;</span>
     };
-    PubsubConnector.checkSubscriptionHasSnapshot = <span class="fstat-no" title="function not covered" >fu</span>nction (symbols, fields) {
+    default_1.checkSubscriptionHasSnapshot = <span class="fstat-no" title="function not covered" >fu</span>nction (symbols, fields) {
         var _this = <span class="cstat-no" title="statement not covered" >this;</span>
 <span class="cstat-no" title="statement not covered" >        symbols.forEach(<span class="fstat-no" title="function not covered" >fu</span>nction (s) {</span>
 <span class="cstat-no" title="statement not covered" >            fields.forEach(<span class="fstat-no" title="function not covered" >fu</span>nction (f) {</span>
@@ -756,7 +762,7 @@ var PubsubConnector = (function () {
             });
         });
     };
-    PubsubConnector.getFieldSnapShotValue = <span class="fstat-no" title="function not covered" >fu</span>nction (definitionId, fieldShortCode) {
+    default_1.getFieldSnapShotValue = <span class="fstat-no" title="function not covered" >fu</span>nction (definitionId, fieldShortCode) {
 <span class="cstat-no" title="statement not covered" >        if (this._subscriptions[definitionId] &amp;&amp;</span>
             this._subscriptions[definitionId][fieldShortCode] &amp;&amp;
             this._subscriptions[definitionId][fieldShortCode].val) {
@@ -764,7 +770,7 @@ var PubsubConnector = (function () {
         }
 <span class="cstat-no" title="statement not covered" >        return null;</span>
     };
-    PubsubConnector.addSubscriptions = <span class="fstat-no" title="function not covered" >fu</span>nction (subId, symbols, fields, callback) {
+    default_1.addSubscriptions = <span class="fstat-no" title="function not covered" >fu</span>nction (subId, symbols, fields, callback) {
         var _this = <span class="cstat-no" title="statement not covered" >this;</span>
 <span class="cstat-no" title="statement not covered" >        symbols.forEach(<span class="fstat-no" title="function not covered" >fu</span>nction (s) {</span>
 <span class="cstat-no" title="statement not covered" >            if (!_this._subscriptions[s]) {</span>
@@ -783,7 +789,7 @@ var PubsubConnector = (function () {
             });
         });
     };
-    PubsubConnector.reSubscribe = <span class="fstat-no" title="function not covered" >fu</span>nction () {
+    default_1.reSubscribe = <span class="fstat-no" title="function not covered" >fu</span>nction () {
         var _this = <span class="cstat-no" title="statement not covered" >this;</span>
 <span class="cstat-no" title="statement not covered" >        if (this.isSocketReady()) {</span>
 <span class="cstat-no" title="statement not covered" >            this._subscriptions = {};</span>
@@ -794,7 +800,7 @@ var PubsubConnector = (function () {
             });
         }
     };
-    PubsubConnector.unSubscribe = <span class="fstat-no" title="function not covered" >fu</span>nction (id) {
+    default_1.unSubscribe = <span class="fstat-no" title="function not covered" >fu</span>nction (id) {
         var _this = <span class="cstat-no" title="statement not covered" >this;</span>
         var findSub = <span class="cstat-no" title="statement not covered" >this._subscriptionsMap.find(<span class="fstat-no" title="function not covered" >fu</span>nction (s) { <span class="cstat-no" title="statement not covered" >return s.id === id; </span>});</span>
         var unSubSymbols = <span class="cstat-no" title="statement not covered" >[];</span>
@@ -828,7 +834,7 @@ var PubsubConnector = (function () {
             }));
         }
     };
-    PubsubConnector.feedSubscriptions = <span class="fstat-no" title="function not covered" >fu</span>nction (data) {
+    default_1.feedSubscriptions = <span class="fstat-no" title="function not covered" >fu</span>nction (data) {
         var _this = <span class="cstat-no" title="statement not covered" >this;</span>
 <span class="cstat-no" title="statement not covered" >        if (this._subscriptions[data._i]) {</span>
 <span class="cstat-no" title="statement not covered" >            Object.keys(data).forEach(<span class="fstat-no" title="function not covered" >fu</span>nction (d) {</span>
@@ -838,7 +844,7 @@ var PubsubConnector = (function () {
             });
         }
     };
-    PubsubConnector.callback = <span class="fstat-no" title="function not covered" >fu</span>nction (data) {
+    default_1.callback = <span class="fstat-no" title="function not covered" >fu</span>nction (data) {
 <span class="cstat-no" title="statement not covered" >        if (this._subscriptions[data._i] &amp;&amp;</span>
             this._subscriptions[data._i].callback &amp;&amp;
             this._subscriptions[data._i].callback) {
@@ -849,7 +855,7 @@ var PubsubConnector = (function () {
             }
         }
     };
-    PubsubConnector.messageEvent = <span class="fstat-no" title="function not covered" >fu</span>nction (message) {
+    default_1.messageEvent = <span class="fstat-no" title="function not covered" >fu</span>nction (message) {
 <span class="cstat-no" title="statement not covered" >        switch (message._id) {</span>
             case 0:
 <span class="cstat-no" title="statement not covered" >                break;</span>
@@ -881,13 +887,13 @@ var PubsubConnector = (function () {
 <span class="cstat-no" title="statement not covered" >                break;</span>
         }
     };
-    PubsubConnector._subscriptions = {};
-    PubsubConnector._subscriptionsMap = [];
-    PubsubConnector._isLogin = false;
-    PubsubConnector._subId = 0;
-    return PubsubConnector;
+    default_1._subscriptions = {};
+    default_1._subscriptionsMap = [];
+    default_1._isLogin = false;
+    default_1._subId = 0;
+    return default_1;
 }());
-exports.PubsubConnector = PubsubConnector;
+exports.default = default_1;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -895,7 +901,7 @@ exports.PubsubConnector = PubsubConnector;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Mon Nov 08 2021 20:25:22 GMT+0300 (GMT+03:00)
+                at Tue Nov 09 2021 09:16:00 GMT+0300 (GMT+03:00)
             </div>
         </div>
         <script src="prettify.js"></script>

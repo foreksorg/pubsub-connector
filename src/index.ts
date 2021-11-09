@@ -1,4 +1,8 @@
-import { WebSocket } from "ws";
+let { WebSocket } = require("ws");
+
+if (typeof window !== "undefined") {
+  WebSocket = window.WebSocket;
+}
 
 /**
  * @description Pubsub Socket Service provide connect socket and manage socket actions

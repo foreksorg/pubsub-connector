@@ -1,4 +1,4 @@
-import { PubsubConnector } from "../dist";
+import PubsubConnector from "../dist";
 
 let _ws: any;
 const options = {
