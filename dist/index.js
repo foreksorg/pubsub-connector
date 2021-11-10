@@ -1,10 +1,7 @@
 'use strict';
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var WebSocket = require("ws").WebSocket;
-if (typeof window !== "undefined") {
-    WebSocket = window.WebSocket;
-}
+var WebSocket = typeof window === "undefined" ? require("ws") : window.WebSocket;
 var PubsubConnector = (function () {
     function PubsubConnector(options) {
         this.subscriptions = {};
@@ -91,6 +88,20 @@ var PubsubConnector = (function () {
     };
     PubsubConnector.prototype.login = function (username, password, resource) {
         if (this.isSocketReady()) {
+            var deviceOss = "";
+            var deviceModel = "";
+            var clientAddress = "";
+            var clientPort = "";
+            var clientLanguage = "";
+            var clientNavigator = "";
+            if (typeof window !== "undefined") {
+                deviceOss = window.navigator.platform;
+                deviceModel = window.navigator.product;
+                clientAddress = location.origin;
+                clientPort = location.port;
+                clientLanguage = window.navigator.language;
+                clientNavigator = window.navigator.appVersion;
+            }
             this.send(JSON.stringify({
                 _id: 64,
                 user: username,
@@ -99,15 +110,15 @@ var PubsubConnector = (function () {
                     company: "foreks",
                     resource: resource,
                     platform: "web",
-                    "device-os": window ? window.navigator.platform : "",
-                    "device-model": window ? window.navigator.product : "",
                     "device-os-version": "",
-                    "app-version": "1.0.1",
-                    "app-name": "foreks-widget-service",
-                    "client-address": location ? location.origin : "",
-                    "client-port": location ? location.port : "",
-                    "client-language": window ? window.navigator.language : "",
-                    "client-navigator": window ? window.navigator.appVersion : "",
+                    "app-version": "1.1.0",
+                    "app-name": "foreks-news-center",
+                    "device-os": deviceOss,
+                    "device-model": deviceModel,
+                    "client-address": clientAddress,
+                    "client-port": clientPort,
+                    "client-language": clientLanguage,
+                    "client-navigator": clientNavigator,
                 },
                 resource: resource,
             }));
