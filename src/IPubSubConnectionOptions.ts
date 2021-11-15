@@ -6,4 +6,5 @@ export default interface IPubSubConnectionOptions {
   isReconnection?: boolean;
   autoReconnect?: boolean;
   reConnectInterval?: number;
+  sendData?: Function;
 }

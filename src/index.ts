@@ -253,6 +253,9 @@ export default class PubsubConnector implements IPubsubConnector {
           sendData._i = s;
           sendData[f] = this.subscriptions[s][f].val;
           this.callback(sendData);
+          if (this.options.sendData) {
+            this.options.sendData(sendData);
+          }
         }
       });
     });
@@ -437,6 +440,9 @@ export default class PubsubConnector implements IPubsubConnector {
         break;
       case 1:
         this.callback(message);
+        if (this.options.sendData) {
+          this.options.sendData(message);
+        }
         break;
       case 67:
         break;

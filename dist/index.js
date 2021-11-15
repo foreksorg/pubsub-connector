@@ -164,6 +164,9 @@ var PubsubConnector = (function () {
                     sendData._i = s;
                     sendData[f] = _this.subscriptions[s][f].val;
                     _this.callback(sendData);
+                    if (_this.options.sendData) {
+                        _this.options.sendData(sendData);
+                    }
                 }
             });
         });
@@ -285,6 +288,9 @@ var PubsubConnector = (function () {
                 break;
             case 1:
                 this.callback(message);
+                if (this.options.sendData) {
+                    this.options.sendData(message);
+                }
                 break;
             case 67:
                 break;
