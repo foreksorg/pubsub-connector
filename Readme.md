@@ -19,6 +19,8 @@ const options = {
   isReconnection: false, // is reconnection default is false
   autoReconnect: true, // auto reconnect on error or on close
   reConnectInterval: 5000, // auto reconnect interval
+  reConnectInterval: 5000, // auto reconnect interval
+  sendData: Function, // on message event
 };
 
 const connector = new PubsubConnector(options);

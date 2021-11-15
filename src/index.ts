@@ -54,7 +54,7 @@ export default class PubsubConnector implements IPubsubConnector {
 
       // on server open
       if (_self.socket) {
-        _self.socket.onopen = function () {
+        _self.socket.onopen = () => {
           _self.socket.onmessage = (msg: any) => {
             _self.messageEvent(JSON.parse(msg.data));
             _self.feedSubscriptions(JSON.parse(msg.data));
@@ -81,7 +81,7 @@ export default class PubsubConnector implements IPubsubConnector {
         };
 
         // on server error
-        _self.socket.onerror = function (err) {
+        _self.socket.onerror = (err) => {
           setTimeout(() => {
             if (_self.options.autoReconnect) {
               _self.connect();
@@ -105,11 +105,7 @@ export default class PubsubConnector implements IPubsubConnector {
    * @return {boolean}
    */
   public isSocketReady(): boolean {
-    if (this.socket) {
-      return this.socket.readyState === WebSocket.OPEN;
-    } else {
-      return false;
-    }
+    return this.socket ? this.socket.readyState === WebSocket.OPEN : false;
   }
 
   /**
@@ -120,6 +116,14 @@ export default class PubsubConnector implements IPubsubConnector {
     if (this.subscriptions[id]) {
       return this.subscriptions[id];
     }
+  }
+
+  /**
+   * @description get subscriptions
+   * @returns {any}
+   */
+  public getSubscriptions(): any {
+    return this.subscriptions;
   }
 
   /**
@@ -194,7 +198,7 @@ export default class PubsubConnector implements IPubsubConnector {
           _id: 16,
         })
       );
-    }, 14000);
+    }, 14_000);
   }
 
   /**
@@ -219,16 +223,16 @@ export default class PubsubConnector implements IPubsubConnector {
       JSON.stringify({
         _id: 1,
         id: this.subId,
-        symbols: symbols,
-        fields: fields,
+        symbols,
+        fields,
       })
     );
 
     this.subscriptionsMap.push({
       id: this.subId,
-      symbols: symbols,
-      fields: fields,
-      callback: callback,
+      symbols,
+      fields,
+      callback,
     });
 
     this.addSubscriptions(this.subId, symbols, fields, callback);
@@ -359,7 +363,7 @@ export default class PubsubConnector implements IPubsubConnector {
       this.send(
         JSON.stringify({
           _id: 2,
-          id: id,
+          id,
           symbols: unSubSymbols,
           fields: unSubFields,
         })

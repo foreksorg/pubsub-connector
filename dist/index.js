@@ -63,17 +63,15 @@ var PubsubConnector = (function () {
         this.socket.close();
     };
     PubsubConnector.prototype.isSocketReady = function () {
-        if (this.socket) {
-            return this.socket.readyState === WebSocket.OPEN;
-        }
-        else {
-            return false;
-        }
+        return this.socket ? this.socket.readyState === WebSocket.OPEN : false;
     };
     PubsubConnector.prototype.getSubscriptionsById = function (id) {
         if (this.subscriptions[id]) {
             return this.subscriptions[id];
         }
+    };
+    PubsubConnector.prototype.getSubscriptions = function () {
+        return this.subscriptions;
     };
     PubsubConnector.prototype.send = function (message) {
         var _this = this;
