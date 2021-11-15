@@ -5,7 +5,7 @@ Foreks publisher subscriber connection class
 ## Installation
 
 ```bash
-$ npm i pubsub-connector -s
+$ npm i foreks-pubsub-connector -s
 ```
 
 ```js

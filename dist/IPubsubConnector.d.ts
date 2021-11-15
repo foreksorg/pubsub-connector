@@ -4,6 +4,7 @@ export default interface IPubsubConnector {
     disconnect(): void;
     isSocketReady(): boolean;
     getSubscriptionsById(id: string): any;
+    getSubscriptions(): any;
     send(message: string): void;
     login(username: string, password: string, resource: string): void;
     scheduleHeartbeat(): void;
