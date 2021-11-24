@@ -13,6 +13,7 @@ export default class PubsubConnector implements IPubsubConnector {
   private subscriptionsMap: any[] = [];
   private isLogin: boolean = false;
   private subId = 0;
+  private reConnectCount = 0;
   private options: IPubSubConnectionOptions;
 
   /**
@@ -37,6 +38,10 @@ export default class PubsubConnector implements IPubsubConnector {
    */
   public connect(): Promise<WebSocket> {
     const _self = this;
+    this.reConnectCount += 1;
+    if (this.reConnectCount > 50) {
+      throw new Error("Too many connection failed");
+    }
 
     return new Promise((resolve, reject) => {
       try {
@@ -50,46 +55,42 @@ export default class PubsubConnector implements IPubsubConnector {
         return;
       }
 
-      resolve(_self.socket);
-
       // on server open
-      if (_self.socket) {
-        _self.socket.onopen = () => {
-          _self.socket.onmessage = (msg: any) => {
-            _self.messageEvent(JSON.parse(msg.data));
-            _self.feedSubscriptions(JSON.parse(msg.data));
-          };
-
-          _self.socket.onclose = () => {
-            setTimeout(() => {
-              _self.connect();
-            }, _self.options.reConnectInterval || 5000);
-          };
-          if (!_self.isLogin) {
-            _self.login(
-              _self.options.username,
-              _self.options.password,
-              _self.options.resource
-            );
-          }
-
-          if (_self.options.isReconnection) {
-            _self.reSubscribe();
-          }
-
-          resolve(_self.socket);
+      _self.socket.onopen = () => {
+        _self.socket.onmessage = (msg: any) => {
+          _self.messageEvent(JSON.parse(msg.data));
+          _self.feedSubscriptions(JSON.parse(msg.data));
         };
 
-        // on server error
-        _self.socket.onerror = (err) => {
+        _self.socket.onclose = () => {
           setTimeout(() => {
-            if (_self.options.autoReconnect) {
-              _self.connect();
-            }
-          }, 5000);
-          reject(err);
+            _self.connect();
+          }, _self.options.reConnectInterval || 5000);
         };
-      }
+        if (!_self.isLogin) {
+          _self.login(
+            _self.options.username,
+            _self.options.password,
+            _self.options.resource
+          );
+        }
+
+        if (_self.options.isReconnection) {
+          _self.reSubscribe();
+        }
+
+        resolve(_self.socket);
+      };
+
+      // on server error
+      _self.socket.onerror = (err) => {
+        setTimeout(() => {
+          if (_self.options.autoReconnect) {
+            _self.connect();
+          }
+        }, _self.options.reConnectInterval || 5000);
+        reject(err);
+      };
     });
   }
 

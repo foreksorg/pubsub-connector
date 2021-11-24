@@ -8,6 +8,7 @@ var PubsubConnector = (function () {
         this.subscriptionsMap = [];
         this.isLogin = false;
         this.subId = 0;
+        this.reConnectCount = 0;
         this.options = options;
     }
     PubsubConnector.prototype.getSocket = function () {
@@ -16,6 +17,10 @@ var PubsubConnector = (function () {
     PubsubConnector.prototype.connect = function () {
         var _this = this;
         var _self = this;
+        this.reConnectCount += 1;
+        if (this.reConnectCount > 50) {
+            throw new Error("Too many connection failed");
+        }
         return new Promise(function (resolve, reject) {
             try {
                 var server = new WebSocket(_this.options.url);
@@ -28,35 +33,32 @@ var PubsubConnector = (function () {
                 }, _self.options.reConnectInterval || 5000);
                 return;
             }
-            resolve(_self.socket);
-            if (_self.socket) {
-                _self.socket.onopen = function () {
-                    _self.socket.onmessage = function (msg) {
-                        _self.messageEvent(JSON.parse(msg.data));
-                        _self.feedSubscriptions(JSON.parse(msg.data));
-                    };
-                    _self.socket.onclose = function () {
-                        setTimeout(function () {
-                            _self.connect();
-                        }, _self.options.reConnectInterval || 5000);
-                    };
-                    if (!_self.isLogin) {
-                        _self.login(_self.options.username, _self.options.password, _self.options.resource);
-                    }
-                    if (_self.options.isReconnection) {
-                        _self.reSubscribe();
-                    }
-                    resolve(_self.socket);
+            _self.socket.onopen = function () {
+                _self.socket.onmessage = function (msg) {
+                    _self.messageEvent(JSON.parse(msg.data));
+                    _self.feedSubscriptions(JSON.parse(msg.data));
                 };
-                _self.socket.onerror = function (err) {
+                _self.socket.onclose = function () {
                     setTimeout(function () {
-                        if (_self.options.autoReconnect) {
-                            _self.connect();
-                        }
-                    }, 5000);
-                    reject(err);
+                        _self.connect();
+                    }, _self.options.reConnectInterval || 5000);
                 };
-            }
+                if (!_self.isLogin) {
+                    _self.login(_self.options.username, _self.options.password, _self.options.resource);
+                }
+                if (_self.options.isReconnection) {
+                    _self.reSubscribe();
+                }
+                resolve(_self.socket);
+            };
+            _self.socket.onerror = function (err) {
+                setTimeout(function () {
+                    if (_self.options.autoReconnect) {
+                        _self.connect();
+                    }
+                }, _self.options.reConnectInterval || 5000);
+                reject(err);
+            };
         });
     };
     PubsubConnector.prototype.disconnect = function () {

@@ -6,6 +6,7 @@ export default class PubsubConnector implements IPubsubConnector {
     private subscriptionsMap;
     private isLogin;
     private subId;
+    private reConnectCount;
     private options;
     constructor(options: IPubSubConnectionOptions);
     getSocket(): WebSocket;
