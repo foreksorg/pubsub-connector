@@ -159,7 +159,7 @@ var PubsubConnector = (function () {
             fields.forEach(function (f) {
                 if (_this.subscriptions[s] &&
                     _this.subscriptions[s][f] &&
-                    _this.subscriptions[s][f].val) {
+                    typeof _this.subscriptions[s][f].val !== "undefined") {
                     var sendData = { _id: 1, _s: 1, _i: "" };
                     sendData._i = s;
                     sendData[f] = _this.subscriptions[s][f].val;

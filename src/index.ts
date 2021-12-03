@@ -252,7 +252,7 @@ export default class PubsubConnector implements IPubsubConnector {
         if (
           this.subscriptions[s] &&
           this.subscriptions[s][f] &&
-          this.subscriptions[s][f].val
+          typeof this.subscriptions[s][f].val !== "undefined"
         ) {
           const sendData = { _id: 1, _s: 1, _i: "" };
           sendData._i = s;
