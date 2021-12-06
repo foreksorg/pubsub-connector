@@ -373,6 +373,16 @@ export default class PubsubConnector implements IPubsubConnector {
   }
 
   /**
+   * @description unsubscribe with subscription id
+   */
+  public unSubscribeAll(): void {
+    for (let i = 0; i < this.subscriptionsMap.length; i++) {
+      const sub = this.subscriptionsMap[i];
+      this.unSubscribe(sub.id);
+    }
+  }
+
+  /**
    * @description feed subscriptions
    * @param {any} data : socket data
    */

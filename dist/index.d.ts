@@ -24,6 +24,7 @@ export default class PubsubConnector implements IPubsubConnector {
     addSubscriptions(subId: number, symbols: string[], fields: string[], callback?: (data: any) => any): void;
     reSubscribe(): void;
     unSubscribe(id: number): void;
+    unSubscribeAll(): void;
     feedSubscriptions(data: any): void;
     callback(data: any): void;
     messageEvent(message: any): void;

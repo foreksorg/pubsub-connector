@@ -243,6 +243,12 @@ var PubsubConnector = (function () {
             }));
         }
     };
+    PubsubConnector.prototype.unSubscribeAll = function () {
+        for (var i = 0; i < this.subscriptionsMap.length; i++) {
+            var sub = this.subscriptionsMap[i];
+            this.unSubscribe(sub.id);
+        }
+    };
     PubsubConnector.prototype.feedSubscriptions = function (data) {
         var _this = this;
         if (this.subscriptions[data._i]) {
