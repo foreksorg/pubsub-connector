@@ -3,6 +3,8 @@ export default interface IPubSubConnectionOptions {
     password: string;
     resource: string;
     url: string;
+    appName?: string;
+    company?: string;
     isReconnection?: boolean;
     autoReconnect?: boolean;
     reConnectInterval?: number;

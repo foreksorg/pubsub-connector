@@ -107,12 +107,10 @@ var PubsubConnector = (function () {
                 user: username,
                 password: password,
                 info: {
-                    company: "foreks",
+                    company: this.options.company || "",
                     resource: resource,
                     platform: "web",
-                    "device-os-version": "",
-                    "app-version": "1.1.0",
-                    "app-name": "foreks-news-center",
+                    "app-name": this.options.appName || "NA",
                     "device-os": deviceOss,
                     "device-model": deviceModel,
                     "client-address": clientAddress,
@@ -159,10 +157,10 @@ var PubsubConnector = (function () {
             fields.forEach(function (f) {
                 if (_this.subscriptions[s] &&
                     _this.subscriptions[s][f] &&
-                    typeof _this.subscriptions[s][f].val !== "undefined") {
+                    typeof _this.subscriptions[s][f] !== "undefined") {
                     var sendData = { _id: 1, _s: 1, _i: "" };
                     sendData._i = s;
-                    sendData[f] = _this.subscriptions[s][f].val;
+                    sendData[f] = _this.subscriptions[s][f];
                     _this.callback(sendData);
                     if (_this.options.sendData) {
                         _this.options.sendData(sendData);
@@ -174,8 +172,8 @@ var PubsubConnector = (function () {
     PubsubConnector.prototype.getFieldSnapShotValue = function (definitionId, fieldShortCode) {
         if (this.subscriptions[definitionId] &&
             this.subscriptions[definitionId][fieldShortCode] &&
-            this.subscriptions[definitionId][fieldShortCode].val) {
-            return this.subscriptions[definitionId][fieldShortCode].val;
+            this.subscriptions[definitionId][fieldShortCode]) {
+            return this.subscriptions[definitionId][fieldShortCode];
         }
         return null;
     };
@@ -190,10 +188,6 @@ var PubsubConnector = (function () {
             fields.forEach(function (f) {
                 if (!_this.subscriptions[s][f]) {
                     _this.subscriptions[s][f] = {};
-                    _this.subscriptions[s][f].count = 1;
-                }
-                else {
-                    _this.subscriptions[s][f].count = _this.subscriptions[s][f].count + 1;
                 }
             });
         });
@@ -210,37 +204,16 @@ var PubsubConnector = (function () {
         }
     };
     PubsubConnector.prototype.unSubscribe = function (id) {
-        var _this = this;
-        var findSub = this.subscriptionsMap.find(function (s) { return s.id === id; });
-        var unSubSymbols = [];
-        var unSubFields = [];
+        var mapIndex = this.subscriptionsMap.findIndex(function (s) { return s.id === id; });
+        var findSub = this.subscriptionsMap[mapIndex];
         if (findSub) {
-            findSub.symbols.forEach(function (s) {
-                findSub.fields.forEach(function (f) {
-                    if (_this.subscriptions[s]) {
-                        if (_this.subscriptions[s][f].count <= 1) {
-                            if (unSubFields.indexOf(f) === -1) {
-                                unSubFields.push(f);
-                                unSubSymbols.push(s);
-                                delete _this.subscriptions[s].callback[id];
-                            }
-                            _this.subscriptions[s][f].count = 0;
-                        }
-                        else {
-                            _this.subscriptions[s][f].count =
-                                _this.subscriptions[s][f].count - 1;
-                        }
-                    }
-                });
-            });
-        }
-        if (unSubSymbols.length > 0 || unSubFields.length > 0) {
             this.send(JSON.stringify({
                 _id: 2,
-                id: id,
-                symbols: unSubSymbols,
-                fields: unSubFields,
+                id: findSub.id,
+                symbols: findSub.symbols,
+                fields: findSub.fields,
             }));
+            this.subscriptionsMap.splice(mapIndex, 1);
         }
     };
     PubsubConnector.prototype.unSubscribeAll = function () {
@@ -254,7 +227,7 @@ var PubsubConnector = (function () {
         if (this.subscriptions[data._i]) {
             Object.keys(data).forEach(function (d) {
                 if (_this.subscriptions[data._i][d]) {
-                    _this.subscriptions[data._i][d].val = data[d];
+                    _this.subscriptions[data._i][d] = data[d];
                 }
             });
         }

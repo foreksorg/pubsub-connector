@@ -170,12 +170,10 @@ export default class PubsubConnector implements IPubsubConnector {
           user: username,
           password,
           info: {
-            company: "foreks",
+            company: this.options.company || "",
             resource,
             platform: "web",
-            "device-os-version": "",
-            "app-version": "1.1.0",
-            "app-name": "foreks-news-center",
+            "app-name": this.options.appName || "NA",
             "device-os": deviceOss,
             "device-model": deviceModel,
             "client-address": clientAddress,
@@ -252,11 +250,11 @@ export default class PubsubConnector implements IPubsubConnector {
         if (
           this.subscriptions[s] &&
           this.subscriptions[s][f] &&
-          typeof this.subscriptions[s][f].val !== "undefined"
+          typeof this.subscriptions[s][f] !== "undefined"
         ) {
           const sendData = { _id: 1, _s: 1, _i: "" };
           sendData._i = s;
-          sendData[f] = this.subscriptions[s][f].val;
+          sendData[f] = this.subscriptions[s][f];
           this.callback(sendData);
           if (this.options.sendData) {
             this.options.sendData(sendData);
@@ -278,9 +276,9 @@ export default class PubsubConnector implements IPubsubConnector {
     if (
       this.subscriptions[definitionId] &&
       this.subscriptions[definitionId][fieldShortCode] &&
-      this.subscriptions[definitionId][fieldShortCode].val
+      this.subscriptions[definitionId][fieldShortCode]
     ) {
-      return this.subscriptions[definitionId][fieldShortCode].val;
+      return this.subscriptions[definitionId][fieldShortCode];
     }
     return null;
   }
@@ -309,9 +307,6 @@ export default class PubsubConnector implements IPubsubConnector {
       fields.forEach((f) => {
         if (!this.subscriptions[s][f]) {
           this.subscriptions[s][f] = {};
-          this.subscriptions[s][f].count = 1;
-        } else {
-          this.subscriptions[s][f].count = this.subscriptions[s][f].count + 1;
         }
       });
     });
@@ -336,39 +331,18 @@ export default class PubsubConnector implements IPubsubConnector {
    * @param {number} id : subscription id
    */
   public unSubscribe(id: number): void {
-    const findSub = this.subscriptionsMap.find((s) => s.id === id);
-    const unSubSymbols: string[] = [];
-    const unSubFields: string[] = [];
+    const mapIndex = this.subscriptionsMap.findIndex((s) => s.id === id);
+    const findSub = this.subscriptionsMap[mapIndex];
     if (findSub) {
-      findSub.symbols.forEach((s) => {
-        findSub.fields.forEach((f) => {
-          if (this.subscriptions[s]) {
-            if (this.subscriptions[s][f].count <= 1) {
-              if (unSubFields.indexOf(f) === -1) {
-                unSubFields.push(f);
-                unSubSymbols.push(s);
-                delete this.subscriptions[s].callback[id];
-              }
-              this.subscriptions[s][f].count = 0;
-            } else {
-              this.subscriptions[s][f].count =
-                this.subscriptions[s][f].count - 1;
-            }
-          }
-        });
-      });
-    }
-
-    // send unsubscibe message
-    if (unSubSymbols.length > 0 || unSubFields.length > 0) {
       this.send(
         JSON.stringify({
           _id: 2,
-          id,
-          symbols: unSubSymbols,
-          fields: unSubFields,
+          id: findSub.id,
+          symbols: findSub.symbols,
+          fields: findSub.fields,
         })
       );
+      this.subscriptionsMap.splice(mapIndex, 1);
     }
   }
 
@@ -390,7 +364,7 @@ export default class PubsubConnector implements IPubsubConnector {
     if (this.subscriptions[data._i]) {
       Object.keys(data).forEach((d) => {
         if (this.subscriptions[data._i][d]) {
-          this.subscriptions[data._i][d].val = data[d];
+          this.subscriptions[data._i][d] = data[d];
         }
       });
     }
