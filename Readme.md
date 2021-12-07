@@ -16,6 +16,8 @@ const options = {
   password: "", // socket password
   resource: "", // socket resource
   url: "", // socket url
+  company: "", // company name
+  appName: "", // application name
   isReconnection: false, // is reconnection default is false
   autoReconnect: true, // auto reconnect on error or on close
   reConnectInterval: 5000, // auto reconnect interval
