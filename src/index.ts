@@ -14,13 +14,34 @@ export default class PubsubConnector implements IPubsubConnector {
   private isLogin: boolean = false;
   private subId = 0;
   private reConnectCount = 0;
-  private options: IPubSubConnectionOptions;
+  private options: IPubSubConnectionOptions = {
+    url: "wss://websocket.foreks.com",
+    username: "",
+    password: "",
+    resource: "",
+    autoReconnect: true,
+    reConnectInterval: 5000,
+    isReconnection: true,
+    company: "",
+    appName: "",
+  };
 
   /**
    * @description contructor
    * @param {PubSubConnectionOptions} options : options
    */
-  constructor(options: IPubSubConnectionOptions) {
+  constructor(options?: IPubSubConnectionOptions) {
+    if (options) {
+      this.options = options;
+    }
+  }
+
+  /**
+   * @description set options for socket
+   * @param {PubSubConnectionOptions} options : options
+   * @return {void}
+   */
+  public setOptions(options: IPubSubConnectionOptions): void {
     this.options = options;
   }
 

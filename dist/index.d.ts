@@ -8,7 +8,8 @@ export default class PubsubConnector implements IPubsubConnector {
     private subId;
     private reConnectCount;
     private options;
-    constructor(options: IPubSubConnectionOptions);
+    constructor(options?: IPubSubConnectionOptions);
+    setOptions(options: IPubSubConnectionOptions): void;
     getSocket(): WebSocket;
     connect(): Promise<WebSocket>;
     disconnect(): void;

@@ -1,5 +1,7 @@
+import IPubSubConnectionOptions from "./IPubSubConnectionOptions";
 export default interface IPubsubConnector {
     getSocket(): WebSocket;
+    setOptions(options: IPubSubConnectionOptions): void;
     connect(): Promise<WebSocket>;
     disconnect(): void;
     isSocketReady(): boolean;

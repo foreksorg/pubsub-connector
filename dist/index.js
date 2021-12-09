@@ -9,8 +9,24 @@ var PubsubConnector = (function () {
         this.isLogin = false;
         this.subId = 0;
         this.reConnectCount = 0;
-        this.options = options;
+        this.options = {
+            url: "wss://websocket.foreks.com",
+            username: "",
+            password: "",
+            resource: "",
+            autoReconnect: true,
+            reConnectInterval: 5000,
+            isReconnection: true,
+            company: "",
+            appName: "",
+        };
+        if (options) {
+            this.options = options;
+        }
     }
+    PubsubConnector.prototype.setOptions = function (options) {
+        this.options = options;
+    };
     PubsubConnector.prototype.getSocket = function () {
         return this.socket;
     };
