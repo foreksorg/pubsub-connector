@@ -327,7 +327,7 @@ export default class PubsubConnector implements IPubsubConnector {
 
       fields.forEach((f) => {
         if (!this.subscriptions[s][f]) {
-          this.subscriptions[s][f] = {};
+          this.subscriptions[s][f] = undefined;
         }
       });
     });

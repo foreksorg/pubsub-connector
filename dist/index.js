@@ -203,7 +203,7 @@ var PubsubConnector = (function () {
             _this.subscriptions[s].callback[subId] = callback;
             fields.forEach(function (f) {
                 if (!_this.subscriptions[s][f]) {
-                    _this.subscriptions[s][f] = {};
+                    _this.subscriptions[s][f] = undefined;
                 }
             });
         });
