@@ -384,7 +384,7 @@ export default class PubsubConnector implements IPubsubConnector {
   public feedSubscriptions(data: any): void {
     if (this.subscriptions[data._i]) {
       Object.keys(data).forEach((d) => {
-        if (this.subscriptions[data._i][d]) {
+        if (this.subscriptions[data._i]) {
           this.subscriptions[data._i][d] = data[d];
         }
       });

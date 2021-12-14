@@ -1,6 +1,6 @@
 {
   "name": "foreks-pubsub-connector",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "Foreks Pubsub Connection",
   "author": "Emre Toprak <emre.toprak@foreks.com>",
   "main": "./dist/index.js",
