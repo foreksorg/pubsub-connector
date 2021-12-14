@@ -242,7 +242,7 @@ var PubsubConnector = (function () {
         var _this = this;
         if (this.subscriptions[data._i]) {
             Object.keys(data).forEach(function (d) {
-                if (_this.subscriptions[data._i][d]) {
+                if (_this.subscriptions[data._i]) {
                     _this.subscriptions[data._i][d] = data[d];
                 }
             });
