@@ -229,6 +229,13 @@ var PubsubConnector = (function () {
                 symbols: findSub.symbols,
                 fields: findSub.fields,
             }));
+            var keys = Object.keys(this.subscriptions);
+            for (var i = 0; i < keys.length; i++) {
+                var sub = this.subscriptions[keys[i]];
+                if (sub.callback && sub.callback[id]) {
+                    sub.callback[id] = undefined;
+                }
+            }
             this.subscriptionsMap.splice(mapIndex, 1);
         }
     };

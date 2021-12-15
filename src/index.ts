@@ -363,6 +363,13 @@ export default class PubsubConnector implements IPubsubConnector {
           fields: findSub.fields,
         })
       );
+      const keys = Object.keys(this.subscriptions);
+      for (let i = 0; i < keys.length; i++) {
+        const sub = this.subscriptions[keys[i]];
+        if (sub.callback && sub.callback[id]) {
+          sub.callback[id] = undefined;
+        }
+      }
       this.subscriptionsMap.splice(mapIndex, 1);
     }
   }
