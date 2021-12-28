@@ -5,8 +5,8 @@ export default interface IPubSubConnectionOptions {
   url: string;
   company: string;
   appName: string;
-  isReconnection?: boolean;
   autoReconnect?: boolean;
   reConnectInterval?: number;
   sendData?: Function;
+  onError?: Function;
 }

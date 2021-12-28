@@ -8,7 +8,6 @@ const options = {
   password: "test", // socket password
   resource: "test", // socket resource
   url: "wss://ws.foreks.com", // socket url
-  isReconnection: false, // is reconnection default is false
   autoReconnect: true, // auto reconnect on error or on close
   reConnectInterval: 5000, // auto reconnect interval
 };

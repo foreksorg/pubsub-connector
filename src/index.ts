@@ -1,7 +1,7 @@
 import IPubSubConnectionOptions from "./IPubSubConnectionOptions";
 import IPubsubConnector from "./IPubsubConnector";
 
-let WebSocket =
+const WebSocket =
   typeof window === "undefined" ? require("ws") : window.WebSocket;
 
 /**
@@ -21,7 +21,6 @@ export default class PubsubConnector implements IPubsubConnector {
     resource: "",
     autoReconnect: true,
     reConnectInterval: 5000,
-    isReconnection: true,
     company: "",
     appName: "",
   };
@@ -66,7 +65,7 @@ export default class PubsubConnector implements IPubsubConnector {
 
     return new Promise((resolve, reject) => {
       try {
-        let server = new WebSocket(this.options.url);
+        const server = new WebSocket(this.options.url);
         _self.socket = server;
       } catch (ex) {
         console.log(ex);
@@ -96,9 +95,7 @@ export default class PubsubConnector implements IPubsubConnector {
           );
         }
 
-        if (_self.options.isReconnection) {
-          _self.reSubscribe();
-        }
+        _self.reSubscribe();
 
         resolve(_self.socket);
       };
@@ -375,7 +372,7 @@ export default class PubsubConnector implements IPubsubConnector {
   }
 
   /**
-   * @description unsubscribe with subscription id
+   * @description unsubscribe all subscriptions
    */
   public unSubscribeAll(): void {
     for (let i = 0; i < this.subscriptionsMap.length; i++) {
@@ -444,6 +441,9 @@ export default class PubsubConnector implements IPubsubConnector {
         if (message.result === 0) {
           console.log("message: Same user logged in another location");
           this.socket.close();
+          if (this.options.onError) {
+            this.options.onError(message);
+          }
         }
         // start heartbeat
         if (message.result === 100) {
@@ -453,6 +453,9 @@ export default class PubsubConnector implements IPubsubConnector {
         // login failed
         if (message.result === 101) {
           console.log("message: Socket Login Failed");
+          if (this.options.onError) {
+            this.options.onError(message);
+          }
         }
         break;
       case 1:

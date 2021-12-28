@@ -16,7 +16,6 @@ var PubsubConnector = (function () {
             resource: "",
             autoReconnect: true,
             reConnectInterval: 5000,
-            isReconnection: true,
             company: "",
             appName: "",
         };
@@ -62,9 +61,7 @@ var PubsubConnector = (function () {
                 if (!_self.isLogin) {
                     _self.login(_self.options.username, _self.options.password, _self.options.resource);
                 }
-                if (_self.options.isReconnection) {
-                    _self.reSubscribe();
-                }
+                _self.reSubscribe();
                 resolve(_self.socket);
             };
             _self.socket.onerror = function (err) {
@@ -279,6 +276,9 @@ var PubsubConnector = (function () {
                 if (message.result === 0) {
                     console.log("message: Same user logged in another location");
                     this.socket.close();
+                    if (this.options.onError) {
+                        this.options.onError(message);
+                    }
                 }
                 if (message.result === 100) {
                     this.scheduleHeartbeat();
@@ -286,6 +286,9 @@ var PubsubConnector = (function () {
                 }
                 if (message.result === 101) {
                     console.log("message: Socket Login Failed");
+                    if (this.options.onError) {
+                        this.options.onError(message);
+                    }
                 }
                 break;
             case 1:
