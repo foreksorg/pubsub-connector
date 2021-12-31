@@ -13,6 +13,7 @@ export default class PubsubConnector implements IPubsubConnector {
   private subscriptionsMap: any[] = [];
   private isLogin: boolean = false;
   private subId = 0;
+  private userLincenses = [];
   private reConnectCount = 0;
   private options: IPubSubConnectionOptions = {
     url: "wss://websocket.foreks.com",
@@ -449,6 +450,7 @@ export default class PubsubConnector implements IPubsubConnector {
         if (message.result === 100) {
           this.scheduleHeartbeat();
           this.reSubscribe();
+          this.userLincenses = message.licenses;
         }
         // login failed
         if (message.result === 101) {
@@ -473,5 +475,12 @@ export default class PubsubConnector implements IPubsubConnector {
         );
         break;
     }
+  }
+
+  /**
+   * @description get user licenses
+   */
+  public getLicenses(): any[] {
+    return this.userLincenses;
   }
 }

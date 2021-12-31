@@ -33,4 +33,5 @@ export default interface IPubsubConnector {
   feedSubscriptions(data: any): void;
   callback(data: any): void;
   messageEvent(message: any): void;
+  getLicenses(): any[];
 }

@@ -6,6 +6,7 @@ export default class PubsubConnector implements IPubsubConnector {
     private subscriptionsMap;
     private isLogin;
     private subId;
+    private userLincenses;
     private reConnectCount;
     private options;
     constructor(options?: IPubSubConnectionOptions);
@@ -29,4 +30,5 @@ export default class PubsubConnector implements IPubsubConnector {
     feedSubscriptions(data: any): void;
     callback(data: any): void;
     messageEvent(message: any): void;
+    getLicenses(): any[];
 }

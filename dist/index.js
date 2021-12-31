@@ -8,6 +8,7 @@ var PubsubConnector = (function () {
         this.subscriptionsMap = [];
         this.isLogin = false;
         this.subId = 0;
+        this.userLincenses = [];
         this.reConnectCount = 0;
         this.options = {
             url: "wss://websocket.foreks.com",
@@ -283,6 +284,7 @@ var PubsubConnector = (function () {
                 if (message.result === 100) {
                     this.scheduleHeartbeat();
                     this.reSubscribe();
+                    this.userLincenses = message.licenses;
                 }
                 if (message.result === 101) {
                     console.log("message: Socket Login Failed");
@@ -303,6 +305,9 @@ var PubsubConnector = (function () {
                 console.warn("Event message not mapped to any method. Message is : ", message);
                 break;
         }
+    };
+    PubsubConnector.prototype.getLicenses = function () {
+        return this.userLincenses;
     };
     return PubsubConnector;
 }());
