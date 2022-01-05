@@ -51,8 +51,9 @@ var PubsubConnector = (function () {
             }
             _self.socket.onopen = function () {
                 _self.socket.onmessage = function (msg) {
-                    _self.messageEvent(JSON.parse(msg.data));
-                    _self.feedSubscriptions(JSON.parse(msg.data));
+                    var msgData = JSON.parse(msg.data);
+                    _self.feedSubscriptions(msgData);
+                    _self.messageEvent(msgData);
                 };
                 _self.socket.onclose = function () {
                     setTimeout(function () {

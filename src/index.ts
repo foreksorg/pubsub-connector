@@ -79,8 +79,9 @@ export default class PubsubConnector implements IPubsubConnector {
       // on server open
       _self.socket.onopen = () => {
         _self.socket.onmessage = (msg: any) => {
-          _self.messageEvent(JSON.parse(msg.data));
-          _self.feedSubscriptions(JSON.parse(msg.data));
+          const msgData = JSON.parse(msg.data);
+          _self.feedSubscriptions(msgData);
+          _self.messageEvent(msgData);
         };
 
         _self.socket.onclose = () => {
