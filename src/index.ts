@@ -60,7 +60,7 @@ export default class PubsubConnector implements IPubsubConnector {
   public connect(): Promise<WebSocket> {
     const _self = this;
     this.reConnectCount += 1;
-    if (this.reConnectCount > 50) {
+    if (this.reConnectCount > 5) {
       throw new Error("Too many connection failed");
     }
 

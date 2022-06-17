@@ -34,7 +34,7 @@ var PubsubConnector = (function () {
         var _this = this;
         var _self = this;
         this.reConnectCount += 1;
-        if (this.reConnectCount > 50) {
+        if (this.reConnectCount > 5) {
             throw new Error("Too many connection failed");
         }
         return new Promise(function (resolve, reject) {
