@@ -85,7 +85,7 @@ export default class PubsubConnector implements IPubsubConnector {
         };
 
         _self.socket.onclose = (message) => {
-          if (message.code !== 1905) {
+          if (message.code !== 3250) {
             setTimeout(() => {
               _self.connect();
             }, _self.options.reConnectInterval || 5000);
@@ -120,7 +120,7 @@ export default class PubsubConnector implements IPubsubConnector {
    * @description disconnect from socket
    */
   public disconnect(): void {
-    this.socket.close(1905);
+    this.socket.close(3250);
   }
 
   /**
