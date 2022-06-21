@@ -56,7 +56,7 @@ var PubsubConnector = (function () {
                     _self.messageEvent(msgData);
                 };
                 _self.socket.onclose = function (message) {
-                    if (message.code !== 1905) {
+                    if (message.code !== 3250) {
                         setTimeout(function () {
                             _self.connect();
                         }, _self.options.reConnectInterval || 5000);
@@ -79,7 +79,7 @@ var PubsubConnector = (function () {
         });
     };
     PubsubConnector.prototype.disconnect = function () {
-        this.socket.close(1905);
+        this.socket.close(3250);
     };
     PubsubConnector.prototype.isSocketReady = function () {
         return this.socket ? this.socket.readyState === WebSocket.OPEN : false;
