@@ -55,10 +55,12 @@ var PubsubConnector = (function () {
                     _self.feedSubscriptions(msgData);
                     _self.messageEvent(msgData);
                 };
-                _self.socket.onclose = function () {
-                    setTimeout(function () {
-                        _self.connect();
-                    }, _self.options.reConnectInterval || 5000);
+                _self.socket.onclose = function (message) {
+                    if (message.code !== 1905) {
+                        setTimeout(function () {
+                            _self.connect();
+                        }, _self.options.reConnectInterval || 5000);
+                    }
                 };
                 if (!_self.isLogin) {
                     _self.login(_self.options.username, _self.options.password, _self.options.resource);
@@ -77,7 +79,7 @@ var PubsubConnector = (function () {
         });
     };
     PubsubConnector.prototype.disconnect = function () {
-        this.socket.close();
+        this.socket.close(1905);
     };
     PubsubConnector.prototype.isSocketReady = function () {
         return this.socket ? this.socket.readyState === WebSocket.OPEN : false;

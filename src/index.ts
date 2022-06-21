@@ -84,10 +84,12 @@ export default class PubsubConnector implements IPubsubConnector {
           _self.messageEvent(msgData);
         };
 
-        _self.socket.onclose = () => {
-          setTimeout(() => {
-            _self.connect();
-          }, _self.options.reConnectInterval || 5000);
+        _self.socket.onclose = (message) => {
+          if (message.code !== 1905) {
+            setTimeout(() => {
+              _self.connect();
+            }, _self.options.reConnectInterval || 5000);
+          }
         };
         if (!_self.isLogin) {
           _self.login(
@@ -118,7 +120,7 @@ export default class PubsubConnector implements IPubsubConnector {
    * @description disconnect from socket
    */
   public disconnect(): void {
-    this.socket.close();
+    this.socket.close(1905);
   }
 
   /**
