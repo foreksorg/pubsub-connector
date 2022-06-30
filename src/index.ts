@@ -445,8 +445,8 @@ export default class PubsubConnector implements IPubsubConnector {
       case 65:
         // Same user logged in another location
         if (message.result === 0) {
-          console.log("message: Same user logged in another location");
-          this.socket.close();
+          console.error("message: Same user logged in another location");
+          this.disconnect();
           if (this.options.onError) {
             this.options.onError(message);
           }
