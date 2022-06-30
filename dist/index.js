@@ -17,6 +17,7 @@ var PubsubConnector = (function () {
             resource: "",
             autoReconnect: true,
             reConnectInterval: 5000,
+            reConnectCountLimit: 5,
             company: "",
             appName: "",
         };
@@ -34,7 +35,7 @@ var PubsubConnector = (function () {
         var _this = this;
         var _self = this;
         this.reConnectCount += 1;
-        if (this.reConnectCount > 5) {
+        if (this.reConnectCount > (this.options.reConnectCountLimit || 5)) {
             throw new Error("Too many connection failed");
         }
         return new Promise(function (resolve, reject) {
@@ -55,12 +56,10 @@ var PubsubConnector = (function () {
                     _self.feedSubscriptions(msgData);
                     _self.messageEvent(msgData);
                 };
-                _self.socket.onclose = function (message) {
-                    if (message.code !== 3250) {
-                        setTimeout(function () {
-                            _self.connect();
-                        }, _self.options.reConnectInterval || 5000);
-                    }
+                _self.socket.onclose = function () {
+                    setTimeout(function () {
+                        _self.connect();
+                    }, _self.options.reConnectInterval || 5000);
                 };
                 if (!_self.isLogin) {
                     _self.login(_self.options.username, _self.options.password, _self.options.resource);
@@ -79,7 +78,10 @@ var PubsubConnector = (function () {
         });
     };
     PubsubConnector.prototype.disconnect = function () {
-        this.socket.close(3250);
+        this.socket.onclose = function () {
+            console.log("disconnected");
+        };
+        this.socket.close();
     };
     PubsubConnector.prototype.isSocketReady = function () {
         return this.socket ? this.socket.readyState === WebSocket.OPEN : false;

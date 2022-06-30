@@ -22,6 +22,7 @@ export default class PubsubConnector implements IPubsubConnector {
     resource: "",
     autoReconnect: true,
     reConnectInterval: 5000,
+    reConnectCountLimit: 5,
     company: "",
     appName: "",
   };
@@ -60,7 +61,7 @@ export default class PubsubConnector implements IPubsubConnector {
   public connect(): Promise<WebSocket> {
     const _self = this;
     this.reConnectCount += 1;
-    if (this.reConnectCount > 5) {
+    if (this.reConnectCount > (this.options.reConnectCountLimit || 5)) {
       throw new Error("Too many connection failed");
     }
 
@@ -84,12 +85,10 @@ export default class PubsubConnector implements IPubsubConnector {
           _self.messageEvent(msgData);
         };
 
-        _self.socket.onclose = (message) => {
-          if (message.code !== 3250) {
-            setTimeout(() => {
-              _self.connect();
-            }, _self.options.reConnectInterval || 5000);
-          }
+        _self.socket.onclose = () => {
+          setTimeout(() => {
+            _self.connect();
+          }, _self.options.reConnectInterval || 5000);
         };
         if (!_self.isLogin) {
           _self.login(
@@ -120,7 +119,10 @@ export default class PubsubConnector implements IPubsubConnector {
    * @description disconnect from socket
    */
   public disconnect(): void {
-    this.socket.close(3250);
+    this.socket.onclose = () => {
+      console.log("disconnected");
+    };
+    this.socket.close();
   }
 
   /**

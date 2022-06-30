@@ -25,6 +25,7 @@ company:  "", // company name
 appName:  "", // application name
 autoReconnect:  true, // auto reconnect on error or on close
 reConnectInterval:  5000, // auto reconnect interval
+reConnectCountLimit:  5, // auto reconnect limit
 sendData:  Function, // on message event
 onError:  Function, // on error event
 };
