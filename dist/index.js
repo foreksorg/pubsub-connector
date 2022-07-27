@@ -1,7 +1,6 @@
 'use strict';
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var WebSocket = typeof window === "undefined" ? require("ws") : window.WebSocket;
 var PubsubConnector = (function () {
     function PubsubConnector(options) {
         this.subscriptions = {};

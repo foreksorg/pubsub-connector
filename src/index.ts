@@ -1,9 +1,6 @@
 import IPubSubConnectionOptions from "./IPubSubConnectionOptions";
 import IPubsubConnector from "./IPubsubConnector";
 
-const WebSocket =
-  typeof window === "undefined" ? require("ws") : window.WebSocket;
-
 /**
  * @description Pubsub Socket Service provide connect socket and manage socket actions
  */
