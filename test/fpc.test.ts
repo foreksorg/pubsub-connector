@@ -7,6 +7,8 @@ const options = {
   username: "test", // socket username
   password: "test", // socket password
   resource: "test", // socket resource
+  company: "foreks", // socket company
+  appName: "pubsub-test", // socket appname
   url: "wss://ws.foreks.com", // socket url
   autoReconnect: true, // auto reconnect on error or on close
   reConnectInterval: 5000, // auto reconnect interval

@@ -1,6 +1,6 @@
 {
   "name": "foreks-pubsub-connector",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "description": "Foreks Pubsub Connection",
   "author": "Emre Toprak <emre.toprak@foreks.com>",
   "main": "./dist/index.js",
@@ -40,20 +40,20 @@
   },
   "homepage": "https://github.com/foreksorg/pubsub-connector#readme",
   "devDependencies": {
-    "@rollup/plugin-typescript": "^8.3.0",
-    "@types/jest": "^27.0.2",
-    "@types/node": "^16.11.7",
-    "@types/ws": "^8.2.0",
-    "jest": "27.3.1",
-    "rollup": "^2.59.0",
+    "@rollup/plugin-typescript": "^8.3.3",
+    "@types/jest": "^28.1.6",
+    "@types/node": "^18.6.1",
+    "@types/ws": "^8.5.3",
+    "jest": "28.1.3",
+    "rollup": "^2.77.2",
     "rollup-plugin-bundle-size": "^1.0.3",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-watch": "4.3.1",
-    "ts-jest": "27.0.7",
-    "tslib": "^2.3.1",
-    "typescript": "^4.4.4"
+    "ts-jest": "28.0.7",
+    "tslib": "^2.4.0",
+    "typescript": "^4.7.4"
   },
   "dependencies": {
-    "ws": "^8.2.3"
+    "ws": "^8.8.1"
   }
 }

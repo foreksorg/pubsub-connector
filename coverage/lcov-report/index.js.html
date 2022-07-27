@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">43.12% </span>
+                <span class="strong">23.93% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>69/160</span>
+                <span class='fraction'>45/188</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">11.36% </span>
+                <span class="strong">5.68% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>10/88</span>
+                <span class='fraction'>5/88</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">42.1% </span>
+                <span class="strong">9.75% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>16/38</span>
+                <span class='fraction'>4/41</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">43.67% </span>
+                <span class="strong">24.45% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>69/158</span>
+                <span class='fraction'>45/184</span>
             </div>
         
             
@@ -54,6 +54,12 @@
         <p class="quiet">
             Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
         </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input oninput="onInput()" type="search" id="fileSearch">
+            </div>
+        </template>
     </div>
     <div class='status-line low'></div>
     <pre><table class="coverage">
@@ -344,27 +350,78 @@
 <a name='L285'></a><a href='#L285'>285</a>
 <a name='L286'></a><a href='#L286'>286</a>
 <a name='L287'></a><a href='#L287'>287</a>
-<a name='L288'></a><a href='#L288'>288</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L288'></a><a href='#L288'>288</a>
+<a name='L289'></a><a href='#L289'>289</a>
+<a name='L290'></a><a href='#L290'>290</a>
+<a name='L291'></a><a href='#L291'>291</a>
+<a name='L292'></a><a href='#L292'>292</a>
+<a name='L293'></a><a href='#L293'>293</a>
+<a name='L294'></a><a href='#L294'>294</a>
+<a name='L295'></a><a href='#L295'>295</a>
+<a name='L296'></a><a href='#L296'>296</a>
+<a name='L297'></a><a href='#L297'>297</a>
+<a name='L298'></a><a href='#L298'>298</a>
+<a name='L299'></a><a href='#L299'>299</a>
+<a name='L300'></a><a href='#L300'>300</a>
+<a name='L301'></a><a href='#L301'>301</a>
+<a name='L302'></a><a href='#L302'>302</a>
+<a name='L303'></a><a href='#L303'>303</a>
+<a name='L304'></a><a href='#L304'>304</a>
+<a name='L305'></a><a href='#L305'>305</a>
+<a name='L306'></a><a href='#L306'>306</a>
+<a name='L307'></a><a href='#L307'>307</a>
+<a name='L308'></a><a href='#L308'>308</a>
+<a name='L309'></a><a href='#L309'>309</a>
+<a name='L310'></a><a href='#L310'>310</a>
+<a name='L311'></a><a href='#L311'>311</a>
+<a name='L312'></a><a href='#L312'>312</a>
+<a name='L313'></a><a href='#L313'>313</a>
+<a name='L314'></a><a href='#L314'>314</a>
+<a name='L315'></a><a href='#L315'>315</a>
+<a name='L316'></a><a href='#L316'>316</a>
+<a name='L317'></a><a href='#L317'>317</a>
+<a name='L318'></a><a href='#L318'>318</a>
+<a name='L319'></a><a href='#L319'>319</a>
+<a name='L320'></a><a href='#L320'>320</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -377,12 +434,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -392,54 +448,64 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -467,34 +533,36 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -503,6 +571,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -510,44 +579,23 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -556,11 +604,13 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -568,11 +618,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -609,24 +666,37 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -634,24 +704,43 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">'use strict';
 &nbsp;
 Object.defineProperty(exports, "__esModule", { value: true });
-var WebSocket = require("ws").WebSocket;
-<span class="missing-if-branch" title="if path not taken" >I</span>if (typeof window !== "undefined") {
-<span class="cstat-no" title="statement not covered" >    WebSocket = window.WebSocket;</span>
-}
+var WebSocket = typeof window === "undefined" ? require("ws") : <span class="branch-1 cbranch-no" title="branch not covered" >window.WebSocket;</span>
 var PubsubConnector = (function () {
     function PubsubConnector(options) {
         this.subscriptions = {};
         this.subscriptionsMap = [];
         this.isLogin = false;
         this.subId = 0;
-        this.options = options;
+        this.userLincenses = [];
+        this.reConnectCount = 0;
+        this.options = {
+            url: "wss://websocket.foreks.com",
+            username: "",
+            password: "",
+            resource: "",
+            autoReconnect: true,
+            reConnectInterval: 5000,
+            reConnectCountLimit: 5,
+            company: "",
+            appName: "",
+        };
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (options) {
+            this.options = options;
+        }
     }
+    PubsubConnector.prototype.setOptions = <span class="fstat-no" title="function not covered" >fu</span>nction (options) {
+<span class="cstat-no" title="statement not covered" >        this.options = options;</span>
+    };
     PubsubConnector.prototype.getSocket = <span class="fstat-no" title="function not covered" >fu</span>nction () {
 <span class="cstat-no" title="statement not covered" >        return this.socket;</span>
     };
     PubsubConnector.prototype.connect = function () {
         var _this = this;
         var _self = this;
+        this.reConnectCount += 1;
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (this.reConnectCount &gt; (this.options.reConnectCountLimit || 5)) {
+<span class="cstat-no" title="statement not covered" >            throw new Error("Too many connection failed");</span>
+        }
         return new Promise(function (resolve, reject) {
             try {
                 var server = new WebSocket(_this.options.url);
@@ -664,83 +753,92 @@ var PubsubConnector = (function () {
                 }, _self.options.reConnectInterval || 5000);
 <span class="cstat-no" title="statement not covered" >                return;</span>
             }
-            resolve(_self.socket);
-            if (_self.socket) {
-                _self.socket.onopen = <span class="fstat-no" title="function not covered" >fu</span>nction () {
-<span class="cstat-no" title="statement not covered" >                    _self.socket.onmessage = <span class="fstat-no" title="function not covered" >fu</span>nction (msg) {</span>
-<span class="cstat-no" title="statement not covered" >                        _self.messageEvent(JSON.parse(msg.data));</span>
-<span class="cstat-no" title="statement not covered" >                        _self.feedSubscriptions(JSON.parse(msg.data));</span>
-                    };
-<span class="cstat-no" title="statement not covered" >                    _self.socket.onclose = <span class="fstat-no" title="function not covered" >fu</span>nction () {</span>
-<span class="cstat-no" title="statement not covered" >                        setTimeout(<span class="fstat-no" title="function not covered" >fu</span>nction () {</span>
-<span class="cstat-no" title="statement not covered" >                            _self.connect();</span>
-                        }, _self.options.reConnectInterval || 5000);
-                    };
-<span class="cstat-no" title="statement not covered" >                    if (!_self.isLogin) {</span>
-<span class="cstat-no" title="statement not covered" >                        _self.login(_self.options.username, _self.options.password, _self.options.resource);</span>
-                    }
-<span class="cstat-no" title="statement not covered" >                    if (_self.options.isReconnection) {</span>
-<span class="cstat-no" title="statement not covered" >                        _self.reSubscribe();</span>
-                    }
-<span class="cstat-no" title="statement not covered" >                    resolve(_self.socket);</span>
+            _self.socket.onopen = <span class="fstat-no" title="function not covered" >fu</span>nction () {
+<span class="cstat-no" title="statement not covered" >                _self.socket.onmessage = <span class="fstat-no" title="function not covered" >fu</span>nction (msg) {</span>
+                    var msgData = <span class="cstat-no" title="statement not covered" >JSON.parse(msg.data);</span>
+<span class="cstat-no" title="statement not covered" >                    _self.feedSubscriptions(msgData);</span>
+<span class="cstat-no" title="statement not covered" >                    _self.messageEvent(msgData);</span>
                 };
-                _self.socket.onerror = function (err) {
-                    setTimeout(<span class="fstat-no" title="function not covered" >fu</span>nction () {
-<span class="cstat-no" title="statement not covered" >                        if (_self.options.autoReconnect) {</span>
-<span class="cstat-no" title="statement not covered" >                            _self.connect();</span>
-                        }
-                    }, 5000);
-                    reject(err);
+<span class="cstat-no" title="statement not covered" >                _self.socket.onclose = <span class="fstat-no" title="function not covered" >fu</span>nction () {</span>
+<span class="cstat-no" title="statement not covered" >                    setTimeout(<span class="fstat-no" title="function not covered" >fu</span>nction () {</span>
+<span class="cstat-no" title="statement not covered" >                        _self.connect();</span>
+                    }, _self.options.reConnectInterval || 5000);
                 };
-            }
+<span class="cstat-no" title="statement not covered" >                if (!_self.isLogin) {</span>
+<span class="cstat-no" title="statement not covered" >                    _self.login(_self.options.username, _self.options.password, _self.options.resource);</span>
+                }
+<span class="cstat-no" title="statement not covered" >                _self.reSubscribe();</span>
+<span class="cstat-no" title="statement not covered" >                resolve(_self.socket);</span>
+            };
+            _self.socket.onerror = <span class="fstat-no" title="function not covered" >fu</span>nction (err) {
+<span class="cstat-no" title="statement not covered" >                setTimeout(<span class="fstat-no" title="function not covered" >fu</span>nction () {</span>
+<span class="cstat-no" title="statement not covered" >                    if (_self.options.autoReconnect) {</span>
+<span class="cstat-no" title="statement not covered" >                        _self.connect();</span>
+                    }
+                }, _self.options.reConnectInterval || 5000);
+<span class="cstat-no" title="statement not covered" >                reject(err);</span>
+            };
         });
     };
-    PubsubConnector.prototype.disconnect = function () {
-        this.socket.close();
+    PubsubConnector.prototype.disconnect = <span class="fstat-no" title="function not covered" >fu</span>nction () {
+<span class="cstat-no" title="statement not covered" >        this.socket.onclose = <span class="fstat-no" title="function not covered" >fu</span>nction () {</span>
+<span class="cstat-no" title="statement not covered" >            console.log("disconnected");</span>
+        };
+<span class="cstat-no" title="statement not covered" >        this.socket.close();</span>
     };
-    PubsubConnector.prototype.isSocketReady = function () {
-        if (this.socket) {
-            return this.socket.readyState === WebSocket.OPEN;
-        }
-        else <span class="missing-if-branch" title="else path not taken" >E</span>{
-<span class="cstat-no" title="statement not covered" >            return false;</span>
-        }
+    PubsubConnector.prototype.isSocketReady = <span class="fstat-no" title="function not covered" >fu</span>nction () {
+<span class="cstat-no" title="statement not covered" >        return this.socket ? this.socket.readyState === WebSocket.OPEN : false;</span>
     };
-    PubsubConnector.prototype.getSubscriptionsById = function (id) {
-        if (this.subscriptions[id]) {
-            return this.subscriptions[id];
+    PubsubConnector.prototype.getSubscriptionsById = <span class="fstat-no" title="function not covered" >fu</span>nction (id) {
+<span class="cstat-no" title="statement not covered" >        if (this.subscriptions[id]) {</span>
+<span class="cstat-no" title="statement not covered" >            return this.subscriptions[id];</span>
         }
     };
-    PubsubConnector.prototype.send = function (message) {
-        var _this = this;
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (this.isSocketReady()) {
+    PubsubConnector.prototype.getSubscriptions = <span class="fstat-no" title="function not covered" >fu</span>nction () {
+<span class="cstat-no" title="statement not covered" >        return this.subscriptions;</span>
+    };
+    PubsubConnector.prototype.send = <span class="fstat-no" title="function not covered" >fu</span>nction (message) {
+        var _this = <span class="cstat-no" title="statement not covered" >this;</span>
+<span class="cstat-no" title="statement not covered" >        if (this.isSocketReady()) {</span>
 <span class="cstat-no" title="statement not covered" >            this.socket.send(message);</span>
         }
         else {
-            setTimeout(<span class="fstat-no" title="function not covered" >fu</span>nction () {
+<span class="cstat-no" title="statement not covered" >            setTimeout(<span class="fstat-no" title="function not covered" >fu</span>nction () {</span>
 <span class="cstat-no" title="statement not covered" >                _this.send(message);</span>
             }, 400);
         }
     };
     PubsubConnector.prototype.login = <span class="fstat-no" title="function not covered" >fu</span>nction (username, password, resource) {
 <span class="cstat-no" title="statement not covered" >        if (this.isSocketReady()) {</span>
+            var deviceOss = <span class="cstat-no" title="statement not covered" >"";</span>
+            var deviceModel = <span class="cstat-no" title="statement not covered" >"";</span>
+            var clientAddress = <span class="cstat-no" title="statement not covered" >"";</span>
+            var clientPort = <span class="cstat-no" title="statement not covered" >"";</span>
+            var clientLanguage = <span class="cstat-no" title="statement not covered" >"";</span>
+            var clientNavigator = <span class="cstat-no" title="statement not covered" >"";</span>
+<span class="cstat-no" title="statement not covered" >            if (typeof window !== "undefined") {</span>
+<span class="cstat-no" title="statement not covered" >                deviceOss = window.navigator.platform;</span>
+<span class="cstat-no" title="statement not covered" >                deviceModel = window.navigator.product;</span>
+<span class="cstat-no" title="statement not covered" >                clientAddress = location.origin;</span>
+<span class="cstat-no" title="statement not covered" >                clientPort = location.port;</span>
+<span class="cstat-no" title="statement not covered" >                clientLanguage = window.navigator.language;</span>
+<span class="cstat-no" title="statement not covered" >                clientNavigator = window.navigator.appVersion;</span>
+            }
 <span class="cstat-no" title="statement not covered" >            this.send(JSON.stringify({</span>
                 _id: 64,
                 user: username,
                 password: password,
                 info: {
-                    company: "foreks",
+                    company: this.options.company || "",
                     resource: resource,
                     platform: "web",
-                    "device-os": window ? window.navigator.platform : "",
-                    "device-model": window ? window.navigator.product : "",
-                    "device-os-version": "",
-                    "app-version": "1.0.1",
-                    "app-name": "foreks-widget-service",
-                    "client-address": location ? location.origin : "",
-                    "client-port": location ? location.port : "",
-                    "client-language": window ? window.navigator.language : "",
-                    "client-navigator": window ? window.navigator.appVersion : "",
+                    "app-name": this.options.appName || "NA",
+                    "device-os": deviceOss,
+                    "device-model": deviceModel,
+                    "client-address": clientAddress,
+                    "client-port": clientPort,
+                    "client-language": clientLanguage,
+                    "client-navigator": clientNavigator,
                 },
                 resource: resource,
             }));
@@ -754,38 +852,41 @@ var PubsubConnector = (function () {
             }));
         }, 14000);
     };
-    PubsubConnector.prototype.subscribe = function (symbols, fields, callback) {
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (!symbols[0]) {
+    PubsubConnector.prototype.subscribe = <span class="fstat-no" title="function not covered" >fu</span>nction (symbols, fields, callback) {
+<span class="cstat-no" title="statement not covered" >        if (!symbols[0]) {</span>
 <span class="cstat-no" title="statement not covered" >            throw new Error("Symbol expired");</span>
         }
-        this.subId = this.subId + 1;
-        this.checkSubscriptionHasSnapshot(symbols, fields);
-        this.send(JSON.stringify({
+<span class="cstat-no" title="statement not covered" >        this.subId = this.subId + 1;</span>
+<span class="cstat-no" title="statement not covered" >        this.checkSubscriptionHasSnapshot(symbols, fields);</span>
+<span class="cstat-no" title="statement not covered" >        this.send(JSON.stringify({</span>
             _id: 1,
             id: this.subId,
             symbols: symbols,
             fields: fields,
         }));
-        this.subscriptionsMap.push({
+<span class="cstat-no" title="statement not covered" >        this.subscriptionsMap.push({</span>
             id: this.subId,
             symbols: symbols,
             fields: fields,
             callback: callback,
         });
-        this.addSubscriptions(this.subId, symbols, fields, callback);
-        return this.subId;
+<span class="cstat-no" title="statement not covered" >        this.addSubscriptions(this.subId, symbols, fields, callback);</span>
+<span class="cstat-no" title="statement not covered" >        return this.subId;</span>
     };
-    PubsubConnector.prototype.checkSubscriptionHasSnapshot = function (symbols, fields) {
-        var _this = this;
-        symbols.forEach(function (s) {
-            fields.forEach(function (f) {
-                <span class="missing-if-branch" title="if path not taken" >I</span>if (_this.subscriptions[s] &amp;&amp;
-<span class="branch-1 cbranch-no" title="branch not covered" >                    _this.subscriptions[s][f] </span>&amp;&amp;
-<span class="branch-2 cbranch-no" title="branch not covered" >                    _this.subscriptions[s][f].val)</span> {
+    PubsubConnector.prototype.checkSubscriptionHasSnapshot = <span class="fstat-no" title="function not covered" >fu</span>nction (symbols, fields) {
+        var _this = <span class="cstat-no" title="statement not covered" >this;</span>
+<span class="cstat-no" title="statement not covered" >        symbols.forEach(<span class="fstat-no" title="function not covered" >fu</span>nction (s) {</span>
+<span class="cstat-no" title="statement not covered" >            fields.forEach(<span class="fstat-no" title="function not covered" >fu</span>nction (f) {</span>
+<span class="cstat-no" title="statement not covered" >                if (_this.subscriptions[s] &amp;&amp;</span>
+                    _this.subscriptions[s][f] &amp;&amp;
+                    typeof _this.subscriptions[s][f] !== "undefined") {
                     var sendData = <span class="cstat-no" title="statement not covered" >{ _id: 1, _s: 1, _i: "" };</span>
 <span class="cstat-no" title="statement not covered" >                    sendData._i = s;</span>
-<span class="cstat-no" title="statement not covered" >                    sendData[f] = _this.subscriptions[s][f].val;</span>
+<span class="cstat-no" title="statement not covered" >                    sendData[f] = _this.subscriptions[s][f];</span>
 <span class="cstat-no" title="statement not covered" >                    _this.callback(sendData);</span>
+<span class="cstat-no" title="statement not covered" >                    if (_this.options.sendData) {</span>
+<span class="cstat-no" title="statement not covered" >                        _this.options.sendData(sendData);</span>
+                    }
                 }
             });
         });
@@ -793,26 +894,22 @@ var PubsubConnector = (function () {
     PubsubConnector.prototype.getFieldSnapShotValue = <span class="fstat-no" title="function not covered" >fu</span>nction (definitionId, fieldShortCode) {
 <span class="cstat-no" title="statement not covered" >        if (this.subscriptions[definitionId] &amp;&amp;</span>
             this.subscriptions[definitionId][fieldShortCode] &amp;&amp;
-            this.subscriptions[definitionId][fieldShortCode].val) {
-<span class="cstat-no" title="statement not covered" >            return this.subscriptions[definitionId][fieldShortCode].val;</span>
+            this.subscriptions[definitionId][fieldShortCode]) {
+<span class="cstat-no" title="statement not covered" >            return this.subscriptions[definitionId][fieldShortCode];</span>
         }
 <span class="cstat-no" title="statement not covered" >        return null;</span>
     };
-    PubsubConnector.prototype.addSubscriptions = function (subId, symbols, fields, callback) {
-        var _this = this;
-        symbols.forEach(function (s) {
-            if (!_this.subscriptions[s]) {
-                _this.subscriptions[s] = {};
-                _this.subscriptions[s].callback = {};
+    PubsubConnector.prototype.addSubscriptions = <span class="fstat-no" title="function not covered" >fu</span>nction (subId, symbols, fields, callback) {
+        var _this = <span class="cstat-no" title="statement not covered" >this;</span>
+<span class="cstat-no" title="statement not covered" >        symbols.forEach(<span class="fstat-no" title="function not covered" >fu</span>nction (s) {</span>
+<span class="cstat-no" title="statement not covered" >            if (!_this.subscriptions[s]) {</span>
+<span class="cstat-no" title="statement not covered" >                _this.subscriptions[s] = {};</span>
+<span class="cstat-no" title="statement not covered" >                _this.subscriptions[s].callback = {};</span>
             }
-            _this.subscriptions[s].callback[subId] = callback;
-            fields.forEach(function (f) {
-                if (!_this.subscriptions[s][f]) {
-                    _this.subscriptions[s][f] = {};
-                    _this.subscriptions[s][f].count = 1;
-                }
-                else <span class="missing-if-branch" title="else path not taken" >E</span>{
-<span class="cstat-no" title="statement not covered" >                    _this.subscriptions[s][f].count = _this.subscriptions[s][f].count + 1;</span>
+<span class="cstat-no" title="statement not covered" >            _this.subscriptions[s].callback[subId] = callback;</span>
+<span class="cstat-no" title="statement not covered" >            fields.forEach(<span class="fstat-no" title="function not covered" >fu</span>nction (f) {</span>
+<span class="cstat-no" title="statement not covered" >                if (!_this.subscriptions[s][f]) {</span>
+<span class="cstat-no" title="statement not covered" >                    _this.subscriptions[s][f] = undefined;</span>
                 }
             });
         });
@@ -829,45 +926,37 @@ var PubsubConnector = (function () {
         }
     };
     PubsubConnector.prototype.unSubscribe = <span class="fstat-no" title="function not covered" >fu</span>nction (id) {
-        var _this = <span class="cstat-no" title="statement not covered" >this;</span>
-        var findSub = <span class="cstat-no" title="statement not covered" >this.subscriptionsMap.find(<span class="fstat-no" title="function not covered" >fu</span>nction (s) { <span class="cstat-no" title="statement not covered" >return s.id === id; </span>});</span>
-        var unSubSymbols = <span class="cstat-no" title="statement not covered" >[];</span>
-        var unSubFields = <span class="cstat-no" title="statement not covered" >[];</span>
+        var mapIndex = <span class="cstat-no" title="statement not covered" >this.subscriptionsMap.findIndex(<span class="fstat-no" title="function not covered" >fu</span>nction (s) { <span class="cstat-no" title="statement not covered" >return s.id === id; </span>});</span>
+        var findSub = <span class="cstat-no" title="statement not covered" >this.subscriptionsMap[mapIndex];</span>
 <span class="cstat-no" title="statement not covered" >        if (findSub) {</span>
-<span class="cstat-no" title="statement not covered" >            findSub.symbols.forEach(<span class="fstat-no" title="function not covered" >fu</span>nction (s) {</span>
-<span class="cstat-no" title="statement not covered" >                findSub.fields.forEach(<span class="fstat-no" title="function not covered" >fu</span>nction (f) {</span>
-<span class="cstat-no" title="statement not covered" >                    if (_this.subscriptions[s]) {</span>
-<span class="cstat-no" title="statement not covered" >                        if (_this.subscriptions[s][f].count &lt;= 1) {</span>
-<span class="cstat-no" title="statement not covered" >                            if (unSubFields.indexOf(f) === -1) {</span>
-<span class="cstat-no" title="statement not covered" >                                unSubFields.push(f);</span>
-<span class="cstat-no" title="statement not covered" >                                unSubSymbols.push(s);</span>
-<span class="cstat-no" title="statement not covered" >                                delete _this.subscriptions[s].callback[id];</span>
-                            }
-<span class="cstat-no" title="statement not covered" >                            _this.subscriptions[s][f].count = 0;</span>
-                        }
-                        else {
-<span class="cstat-no" title="statement not covered" >                            _this.subscriptions[s][f].count =</span>
-                                _this.subscriptions[s][f].count - 1;
-                        }
-                    }
-                });
-            });
-        }
-<span class="cstat-no" title="statement not covered" >        if (unSubSymbols.length &gt; 0 || unSubFields.length &gt; 0) {</span>
 <span class="cstat-no" title="statement not covered" >            this.send(JSON.stringify({</span>
                 _id: 2,
-                id: id,
-                symbols: unSubSymbols,
-                fields: unSubFields,
+                id: findSub.id,
+                symbols: findSub.symbols,
+                fields: findSub.fields,
             }));
+            var keys = <span class="cstat-no" title="statement not covered" >Object.keys(this.subscriptions);</span>
+<span class="cstat-no" title="statement not covered" >            for (var i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; keys.length; i++) {</span>
+                var sub = <span class="cstat-no" title="statement not covered" >this.subscriptions[keys[i]];</span>
+<span class="cstat-no" title="statement not covered" >                if (sub.callback &amp;&amp; sub.callback[id]) {</span>
+<span class="cstat-no" title="statement not covered" >                    sub.callback[id] = undefined;</span>
+                }
+            }
+<span class="cstat-no" title="statement not covered" >            this.subscriptionsMap.splice(mapIndex, 1);</span>
+        }
+    };
+    PubsubConnector.prototype.unSubscribeAll = <span class="fstat-no" title="function not covered" >fu</span>nction () {
+<span class="cstat-no" title="statement not covered" >        for (var i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; this.subscriptionsMap.length; i++) {</span>
+            var sub = <span class="cstat-no" title="statement not covered" >this.subscriptionsMap[i];</span>
+<span class="cstat-no" title="statement not covered" >            this.unSubscribe(sub.id);</span>
         }
     };
     PubsubConnector.prototype.feedSubscriptions = <span class="fstat-no" title="function not covered" >fu</span>nction (data) {
         var _this = <span class="cstat-no" title="statement not covered" >this;</span>
 <span class="cstat-no" title="statement not covered" >        if (this.subscriptions[data._i]) {</span>
 <span class="cstat-no" title="statement not covered" >            Object.keys(data).forEach(<span class="fstat-no" title="function not covered" >fu</span>nction (d) {</span>
-<span class="cstat-no" title="statement not covered" >                if (_this.subscriptions[data._i][d]) {</span>
-<span class="cstat-no" title="statement not covered" >                    _this.subscriptions[data._i][d].val = data[d];</span>
+<span class="cstat-no" title="statement not covered" >                if (_this.subscriptions[data._i]) {</span>
+<span class="cstat-no" title="statement not covered" >                    _this.subscriptions[data._i][d] = data[d];</span>
                 }
             });
         }
@@ -894,19 +983,29 @@ var PubsubConnector = (function () {
 <span class="cstat-no" title="statement not covered" >                break;</span>
             case 65:
 <span class="cstat-no" title="statement not covered" >                if (message.result === 0) {</span>
-<span class="cstat-no" title="statement not covered" >                    console.log("message: Same user logged in another location");</span>
-<span class="cstat-no" title="statement not covered" >                    this.socket.close();</span>
+<span class="cstat-no" title="statement not covered" >                    console.error("message: Same user logged in another location");</span>
+<span class="cstat-no" title="statement not covered" >                    this.disconnect();</span>
+<span class="cstat-no" title="statement not covered" >                    if (this.options.onError) {</span>
+<span class="cstat-no" title="statement not covered" >                        this.options.onError(message);</span>
+                    }
                 }
 <span class="cstat-no" title="statement not covered" >                if (message.result === 100) {</span>
 <span class="cstat-no" title="statement not covered" >                    this.scheduleHeartbeat();</span>
 <span class="cstat-no" title="statement not covered" >                    this.reSubscribe();</span>
+<span class="cstat-no" title="statement not covered" >                    this.userLincenses = message.licenses;</span>
                 }
 <span class="cstat-no" title="statement not covered" >                if (message.result === 101) {</span>
 <span class="cstat-no" title="statement not covered" >                    console.log("message: Socket Login Failed");</span>
+<span class="cstat-no" title="statement not covered" >                    if (this.options.onError) {</span>
+<span class="cstat-no" title="statement not covered" >                        this.options.onError(message);</span>
+                    }
                 }
 <span class="cstat-no" title="statement not covered" >                break;</span>
             case 1:
 <span class="cstat-no" title="statement not covered" >                this.callback(message);</span>
+<span class="cstat-no" title="statement not covered" >                if (this.options.sendData) {</span>
+<span class="cstat-no" title="statement not covered" >                    this.options.sendData(message);</span>
+                }
 <span class="cstat-no" title="statement not covered" >                break;</span>
             case 67:
 <span class="cstat-no" title="statement not covered" >                break;</span>
@@ -914,6 +1013,9 @@ var PubsubConnector = (function () {
 <span class="cstat-no" title="statement not covered" >                console.warn("Event message not mapped to any method. Message is : ", message);</span>
 <span class="cstat-no" title="statement not covered" >                break;</span>
         }
+    };
+    PubsubConnector.prototype.getLicenses = <span class="fstat-no" title="function not covered" >fu</span>nction () {
+<span class="cstat-no" title="statement not covered" >        return this.userLincenses;</span>
     };
     return PubsubConnector;
 }());
@@ -924,10 +1026,9 @@ exports.default = PubsubConnector;
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
-                <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Tue Nov 09 2021 11:43:43 GMT+0300 (GMT+03:00)
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2022-07-27T14:39:28.010Z
             </div>
-        </div>
         <script src="prettify.js"></script>
         <script>
             window.onload = function () {
