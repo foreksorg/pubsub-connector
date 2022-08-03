@@ -31,7 +31,7 @@ var PubsubConnector = (function () {
         return this.socket;
     };
     PubsubConnector.prototype.connect = function () {
-        var _this = this;
+        var _this_1 = this;
         var _self = this;
         this.reConnectCount += 1;
         if (this.reConnectCount > (this.options.reConnectCountLimit || 5)) {
@@ -39,7 +39,7 @@ var PubsubConnector = (function () {
         }
         return new Promise(function (resolve, reject) {
             try {
-                var server = new WebSocket(_this.options.url);
+                var server = new WebSocket(_this_1.options.url);
                 _self.socket = server;
             }
             catch (ex) {
@@ -94,13 +94,13 @@ var PubsubConnector = (function () {
         return this.subscriptions;
     };
     PubsubConnector.prototype.send = function (message) {
-        var _this = this;
+        var _this_1 = this;
         if (this.isSocketReady()) {
             this.socket.send(message);
         }
         else {
             setTimeout(function () {
-                _this.send(message);
+                _this_1.send(message);
             }, 400);
         }
     };
@@ -141,9 +141,9 @@ var PubsubConnector = (function () {
         }
     };
     PubsubConnector.prototype.scheduleHeartbeat = function () {
-        var _this = this;
+        var _this_1 = this;
         setInterval(function () {
-            _this.send(JSON.stringify({
+            _this_1.send(JSON.stringify({
                 _id: 16,
             }));
         }, 14000);
@@ -170,18 +170,18 @@ var PubsubConnector = (function () {
         return this.subId;
     };
     PubsubConnector.prototype.checkSubscriptionHasSnapshot = function (symbols, fields) {
-        var _this = this;
+        var _this_1 = this;
         symbols.forEach(function (s) {
             fields.forEach(function (f) {
                 var _a;
-                if (((_a = _this.subscriptions[s]) === null || _a === void 0 ? void 0 : _a[f]) &&
-                    typeof _this.subscriptions[s][f] !== "undefined") {
+                if (((_a = _this_1.subscriptions[s]) === null || _a === void 0 ? void 0 : _a[f]) &&
+                    typeof _this_1.subscriptions[s][f] !== "undefined") {
                     var sendData = { _id: 1, _s: 1, _i: "" };
                     sendData._i = s;
-                    sendData[f] = _this.subscriptions[s][f];
-                    _this.callback(sendData);
-                    if (_this.options.sendData) {
-                        _this.options.sendData(sendData);
+                    sendData[f] = _this_1.subscriptions[s][f];
+                    _this_1.callback(sendData);
+                    if (_this_1.options.sendData) {
+                        _this_1.options.sendData(sendData);
                     }
                 }
             });
@@ -196,34 +196,34 @@ var PubsubConnector = (function () {
         return null;
     };
     PubsubConnector.prototype.addSubscriptions = function (subId, symbols, fields, callback) {
-        var _this = this;
+        var _this_1 = this;
         symbols.forEach(function (s) {
-            if (!_this.subscriptions[s]) {
-                _this.subscriptions[s] = {};
-                _this.subscriptions[s].callback = {};
+            if (!_this_1.subscriptions[s]) {
+                _this_1.subscriptions[s] = {};
+                _this_1.subscriptions[s].callback = {};
             }
             if (callback)
-                _this.subscriptions[s].callback[subId] = callback;
+                _this_1.subscriptions[s].callback[subId] = callback;
             fields.forEach(function (f) {
-                if (!_this.subscriptions[s][f]) {
-                    _this.subscriptions[s][f] = undefined;
+                if (!_this_1.subscriptions[s][f]) {
+                    _this_1.subscriptions[s][f] = undefined;
                 }
             });
         });
     };
     PubsubConnector.prototype.reSubscribe = function () {
-        var _this = this;
+        var _this_1 = this;
         if (this.isSocketReady()) {
             this.subscriptions = {};
             var tempSubMap = Object.assign([], this.subscriptionsMap);
             this.subscriptionsMap = [];
             tempSubMap.forEach(function (s) {
-                _this.subscribe(s.symbols, s.fields, s.callback);
+                _this_1.subscribe(s.symbols, s.fields, s.callback);
             });
         }
     };
     PubsubConnector.prototype.unSubscribe = function (id) {
-        var _a;
+        var _this = this;
         var mapIndex = this.subscriptionsMap.findIndex(function (s) { return s.id === id; });
         var findSub = this.subscriptionsMap[mapIndex];
         if (findSub) {
@@ -233,14 +233,9 @@ var PubsubConnector = (function () {
                 symbols: findSub.symbols,
                 fields: findSub.fields,
             }));
-            var keys = Object.keys(this.subscriptions);
-            for (var _b = 0, keys_1 = keys; _b < keys_1.length; _b++) {
-                var key = keys_1[_b];
-                var sub = this.subscriptions[key];
-                if ((_a = sub.callback) === null || _a === void 0 ? void 0 : _a[id]) {
-                    sub.callback[id] = undefined;
-                }
-            }
+            findSub.symbols.map(function (symbol) {
+                delete _this.subscriptions[symbol].callback[id];
+            });
             this.subscriptionsMap.splice(mapIndex, 1);
         }
     };
@@ -251,11 +246,11 @@ var PubsubConnector = (function () {
         }
     };
     PubsubConnector.prototype.feedSubscriptions = function (data) {
-        var _this = this;
+        var _this_1 = this;
         if (this.subscriptions[data._i]) {
             Object.keys(data).forEach(function (d) {
-                if (_this.subscriptions[data._i]) {
-                    _this.subscriptions[data._i][d] = data[d];
+                if (_this_1.subscriptions[data._i]) {
+                    _this_1.subscriptions[data._i][d] = data[d];
                 }
             });
         }

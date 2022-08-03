@@ -350,6 +350,7 @@ export default class PubsubConnector implements IPubsubConnector {
    * @param {number} id : subscription id
    */
   public unSubscribe(id: number): void {
+    const _this = this;
     const mapIndex = this.subscriptionsMap.findIndex((s) => s.id === id);
     const findSub = this.subscriptionsMap[mapIndex];
     if (findSub) {
@@ -361,13 +362,9 @@ export default class PubsubConnector implements IPubsubConnector {
           fields: findSub.fields,
         })
       );
-      const keys = Object.keys(this.subscriptions);
-      for (const key of keys) {
-        const sub = this.subscriptions[key];
-        if (sub.callback?.[id]) {
-          sub.callback[id] = undefined;
-        }
-      }
+      findSub.symbols.map((symbol: string) => {
+        delete _this.subscriptions[symbol].callback[id];
+      });
       this.subscriptionsMap.splice(mapIndex, 1);
     }
   }
