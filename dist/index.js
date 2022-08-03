@@ -173,8 +173,8 @@ var PubsubConnector = (function () {
         var _this = this;
         symbols.forEach(function (s) {
             fields.forEach(function (f) {
-                if (_this.subscriptions[s] &&
-                    _this.subscriptions[s][f] &&
+                var _a;
+                if (((_a = _this.subscriptions[s]) === null || _a === void 0 ? void 0 : _a[f]) &&
                     typeof _this.subscriptions[s][f] !== "undefined") {
                     var sendData = { _id: 1, _s: 1, _i: "" };
                     sendData._i = s;
@@ -188,8 +188,8 @@ var PubsubConnector = (function () {
         });
     };
     PubsubConnector.prototype.getFieldSnapShotValue = function (definitionId, fieldShortCode) {
-        if (this.subscriptions[definitionId] &&
-            this.subscriptions[definitionId][fieldShortCode] &&
+        var _a;
+        if (((_a = this.subscriptions[definitionId]) === null || _a === void 0 ? void 0 : _a[fieldShortCode]) &&
             this.subscriptions[definitionId][fieldShortCode]) {
             return this.subscriptions[definitionId][fieldShortCode];
         }
@@ -202,7 +202,8 @@ var PubsubConnector = (function () {
                 _this.subscriptions[s] = {};
                 _this.subscriptions[s].callback = {};
             }
-            _this.subscriptions[s].callback[subId] = callback;
+            if (callback)
+                _this.subscriptions[s].callback[subId] = callback;
             fields.forEach(function (f) {
                 if (!_this.subscriptions[s][f]) {
                     _this.subscriptions[s][f] = undefined;
@@ -222,6 +223,7 @@ var PubsubConnector = (function () {
         }
     };
     PubsubConnector.prototype.unSubscribe = function (id) {
+        var _a;
         var mapIndex = this.subscriptionsMap.findIndex(function (s) { return s.id === id; });
         var findSub = this.subscriptionsMap[mapIndex];
         if (findSub) {
@@ -232,9 +234,10 @@ var PubsubConnector = (function () {
                 fields: findSub.fields,
             }));
             var keys = Object.keys(this.subscriptions);
-            for (var i = 0; i < keys.length; i++) {
-                var sub = this.subscriptions[keys[i]];
-                if (sub.callback && sub.callback[id]) {
+            for (var _b = 0, keys_1 = keys; _b < keys_1.length; _b++) {
+                var key = keys_1[_b];
+                var sub = this.subscriptions[key];
+                if ((_a = sub.callback) === null || _a === void 0 ? void 0 : _a[id]) {
                     sub.callback[id] = undefined;
                 }
             }

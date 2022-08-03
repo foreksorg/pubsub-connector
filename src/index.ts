@@ -269,8 +269,7 @@ export default class PubsubConnector implements IPubsubConnector {
     symbols.forEach((s) => {
       fields.forEach((f) => {
         if (
-          this.subscriptions[s] &&
-          this.subscriptions[s][f] &&
+          this.subscriptions[s]?.[f] &&
           typeof this.subscriptions[s][f] !== "undefined"
         ) {
           const sendData = { _id: 1, _s: 1, _i: "" };
@@ -295,8 +294,7 @@ export default class PubsubConnector implements IPubsubConnector {
     fieldShortCode: string
   ): any | null {
     if (
-      this.subscriptions[definitionId] &&
-      this.subscriptions[definitionId][fieldShortCode] &&
+      this.subscriptions[definitionId]?.[fieldShortCode] &&
       this.subscriptions[definitionId][fieldShortCode]
     ) {
       return this.subscriptions[definitionId][fieldShortCode];
@@ -323,7 +321,7 @@ export default class PubsubConnector implements IPubsubConnector {
         this.subscriptions[s].callback = {};
       }
 
-      this.subscriptions[s].callback[subId] = callback;
+      if (callback) this.subscriptions[s].callback[subId] = callback;
 
       fields.forEach((f) => {
         if (!this.subscriptions[s][f]) {
@@ -364,9 +362,9 @@ export default class PubsubConnector implements IPubsubConnector {
         })
       );
       const keys = Object.keys(this.subscriptions);
-      for (let i = 0; i < keys.length; i++) {
-        const sub = this.subscriptions[keys[i]];
-        if (sub.callback && sub.callback[id]) {
+      for (const key of keys) {
+        const sub = this.subscriptions[key];
+        if (sub.callback?.[id]) {
           sub.callback[id] = undefined;
         }
       }
