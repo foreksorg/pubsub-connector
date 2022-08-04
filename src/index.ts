@@ -35,6 +35,14 @@ export default class PubsubConnector implements IPubsubConnector {
   }
 
   /**
+   * @description reset reconnect count
+   * @return {void}
+   */
+  public resetReconnectCount(): void {
+    this.reConnectCount = 0;
+  }
+
+  /**
    * @description set options for socket
    * @param {PubSubConnectionOptions} options : options
    * @return {void}
@@ -56,7 +64,6 @@ export default class PubsubConnector implements IPubsubConnector {
    * @param {PubSubConnectionOptions} options : options
    */
   public connect(): Promise<WebSocket> {
-    const _self = this;
     this.reConnectCount += 1;
     if (this.reConnectCount > (this.options.reConnectCountLimit || 5)) {
       throw new Error("Too many connection failed");
@@ -65,48 +72,48 @@ export default class PubsubConnector implements IPubsubConnector {
     return new Promise((resolve, reject) => {
       try {
         const server = new WebSocket(this.options.url);
-        _self.socket = server;
+        this.socket = server;
       } catch (ex) {
-        console.log(ex);
+        console.error(ex);
         setTimeout(() => {
-          _self.connect();
-        }, _self.options.reConnectInterval || 5000);
+          this.connect();
+        }, this.options.reConnectInterval || 5000);
         return;
       }
 
       // on server open
-      _self.socket.onopen = () => {
-        _self.socket.onmessage = (msg: any) => {
+      this.socket.onopen = () => {
+        this.socket.onmessage = (msg: any) => {
           const msgData = JSON.parse(msg.data);
-          _self.feedSubscriptions(msgData);
-          _self.messageEvent(msgData);
+          this.feedSubscriptions(msgData);
+          this.messageEvent(msgData);
         };
 
-        _self.socket.onclose = () => {
+        this.socket.onclose = () => {
           setTimeout(() => {
-            _self.connect();
-          }, _self.options.reConnectInterval || 5000);
+            this.connect();
+          }, this.options.reConnectInterval || 5000);
         };
-        if (!_self.isLogin) {
-          _self.login(
-            _self.options.username,
-            _self.options.password,
-            _self.options.resource
+        if (!this.isLogin) {
+          this.login(
+            this.options.username,
+            this.options.password,
+            this.options.resource
           );
         }
 
-        _self.reSubscribe();
+        this.reSubscribe();
 
-        resolve(_self.socket);
+        resolve(this.socket);
       };
 
       // on server error
-      _self.socket.onerror = (err) => {
+      this.socket.onerror = (err) => {
         setTimeout(() => {
-          if (_self.options.autoReconnect) {
-            _self.connect();
+          if (this.options.autoReconnect) {
+            this.connect();
           }
-        }, _self.options.reConnectInterval || 5000);
+        }, this.options.reConnectInterval || 5000);
         reject(err);
       };
     });
@@ -218,7 +225,7 @@ export default class PubsubConnector implements IPubsubConnector {
           _id: 16,
         })
       );
-    }, 14_000);
+    }, 13_000);
   }
 
   /**
@@ -266,8 +273,8 @@ export default class PubsubConnector implements IPubsubConnector {
    * @param {string[]} fields : fields list
    */
   public checkSubscriptionHasSnapshot(symbols: string[], fields: string[]) {
-    symbols.forEach((s) => {
-      fields.forEach((f) => {
+    for (const s of symbols) {
+      for (const f of fields) {
         if (
           this.subscriptions[s]?.[f] &&
           typeof this.subscriptions[s][f] !== "undefined"
@@ -280,8 +287,8 @@ export default class PubsubConnector implements IPubsubConnector {
             this.options.sendData(sendData);
           }
         }
-      });
-    });
+      }
+    }
   }
 
   /**
@@ -315,7 +322,7 @@ export default class PubsubConnector implements IPubsubConnector {
     fields: string[],
     callback?: (data: any) => any
   ): void {
-    symbols.forEach((s) => {
+    for (const s of symbols) {
       if (!this.subscriptions[s]) {
         this.subscriptions[s] = {};
         this.subscriptions[s].callback = {};
@@ -323,12 +330,12 @@ export default class PubsubConnector implements IPubsubConnector {
 
       if (callback) this.subscriptions[s].callback[subId] = callback;
 
-      fields.forEach((f) => {
+      for (const f of fields) {
         if (!this.subscriptions[s][f]) {
           this.subscriptions[s][f] = undefined;
         }
-      });
-    });
+      }
+    }
   }
 
   /**
@@ -339,9 +346,9 @@ export default class PubsubConnector implements IPubsubConnector {
       this.subscriptions = {};
       const tempSubMap = Object.assign([], this.subscriptionsMap);
       this.subscriptionsMap = [];
-      tempSubMap.forEach((s: any) => {
+      for (const s of tempSubMap as any) {
         this.subscribe(s.symbols, s.fields, s.callback);
-      });
+      }
     }
   }
 
@@ -350,7 +357,6 @@ export default class PubsubConnector implements IPubsubConnector {
    * @param {number} id : subscription id
    */
   public unSubscribe(id: number): void {
-    const _this = this;
     const mapIndex = this.subscriptionsMap.findIndex((s) => s.id === id);
     const findSub = this.subscriptionsMap[mapIndex];
     if (findSub) {
@@ -363,7 +369,7 @@ export default class PubsubConnector implements IPubsubConnector {
         })
       );
       findSub.symbols.map((symbol: string) => {
-        delete _this.subscriptions[symbol].callback[id];
+        delete this.subscriptions[symbol].callback[id];
       });
       this.subscriptionsMap.splice(mapIndex, 1);
     }
@@ -373,8 +379,7 @@ export default class PubsubConnector implements IPubsubConnector {
    * @description unsubscribe all subscriptions
    */
   public unSubscribeAll(): void {
-    for (let i = 0; i < this.subscriptionsMap.length; i++) {
-      const sub = this.subscriptionsMap[i];
+    for (const sub of this.subscriptionsMap) {
       this.unSubscribe(sub.id);
     }
   }
@@ -399,19 +404,11 @@ export default class PubsubConnector implements IPubsubConnector {
    */
   public callback(data: any): void {
     if (
-      this.subscriptions[data._i] &&
-      this.subscriptions[data._i].callback &&
+      this.subscriptions[data._i]?.callback &&
       this.subscriptions[data._i].callback
     ) {
-      for (
-        let i = 0;
-        i < Object.keys(this.subscriptions[data._i].callback).length;
-        i++
-      ) {
-        const callback =
-          this.subscriptions[data._i].callback[
-            Object.keys(this.subscriptions[data._i].callback)[i]
-          ];
+      for (const sub of Object.keys(this.subscriptions[data._i].callback)) {
+        const callback = this.subscriptions[data._i].callback[sub];
         if (callback) callback(data);
       }
     }
@@ -451,7 +448,7 @@ export default class PubsubConnector implements IPubsubConnector {
         }
         // login failed
         if (message.result === 101) {
-          console.log("message: Socket Login Failed");
+          console.error("message: Socket Login Failed");
           if (this.options.onError) {
             this.options.onError(message);
           }

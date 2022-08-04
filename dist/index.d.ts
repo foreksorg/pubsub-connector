@@ -10,6 +10,7 @@ export default class PubsubConnector implements IPubsubConnector {
     private reConnectCount;
     private options;
     constructor(options?: IPubSubConnectionOptions);
+    resetReconnectCount(): void;
     setOptions(options: IPubSubConnectionOptions): void;
     getSocket(): WebSocket;
     connect(): Promise<WebSocket>;

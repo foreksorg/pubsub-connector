@@ -24,6 +24,9 @@ var PubsubConnector = (function () {
             this.options = options;
         }
     }
+    PubsubConnector.prototype.resetReconnectCount = function () {
+        this.reConnectCount = 0;
+    };
     PubsubConnector.prototype.setOptions = function (options) {
         this.options = options;
     };
@@ -31,47 +34,46 @@ var PubsubConnector = (function () {
         return this.socket;
     };
     PubsubConnector.prototype.connect = function () {
-        var _this_1 = this;
-        var _self = this;
+        var _this = this;
         this.reConnectCount += 1;
         if (this.reConnectCount > (this.options.reConnectCountLimit || 5)) {
             throw new Error("Too many connection failed");
         }
         return new Promise(function (resolve, reject) {
             try {
-                var server = new WebSocket(_this_1.options.url);
-                _self.socket = server;
+                var server = new WebSocket(_this.options.url);
+                _this.socket = server;
             }
             catch (ex) {
-                console.log(ex);
+                console.error(ex);
                 setTimeout(function () {
-                    _self.connect();
-                }, _self.options.reConnectInterval || 5000);
+                    _this.connect();
+                }, _this.options.reConnectInterval || 5000);
                 return;
             }
-            _self.socket.onopen = function () {
-                _self.socket.onmessage = function (msg) {
+            _this.socket.onopen = function () {
+                _this.socket.onmessage = function (msg) {
                     var msgData = JSON.parse(msg.data);
-                    _self.feedSubscriptions(msgData);
-                    _self.messageEvent(msgData);
+                    _this.feedSubscriptions(msgData);
+                    _this.messageEvent(msgData);
                 };
-                _self.socket.onclose = function () {
+                _this.socket.onclose = function () {
                     setTimeout(function () {
-                        _self.connect();
-                    }, _self.options.reConnectInterval || 5000);
+                        _this.connect();
+                    }, _this.options.reConnectInterval || 5000);
                 };
-                if (!_self.isLogin) {
-                    _self.login(_self.options.username, _self.options.password, _self.options.resource);
+                if (!_this.isLogin) {
+                    _this.login(_this.options.username, _this.options.password, _this.options.resource);
                 }
-                _self.reSubscribe();
-                resolve(_self.socket);
+                _this.reSubscribe();
+                resolve(_this.socket);
             };
-            _self.socket.onerror = function (err) {
+            _this.socket.onerror = function (err) {
                 setTimeout(function () {
-                    if (_self.options.autoReconnect) {
-                        _self.connect();
+                    if (_this.options.autoReconnect) {
+                        _this.connect();
                     }
-                }, _self.options.reConnectInterval || 5000);
+                }, _this.options.reConnectInterval || 5000);
                 reject(err);
             };
         });
@@ -94,13 +96,13 @@ var PubsubConnector = (function () {
         return this.subscriptions;
     };
     PubsubConnector.prototype.send = function (message) {
-        var _this_1 = this;
+        var _this = this;
         if (this.isSocketReady()) {
             this.socket.send(message);
         }
         else {
             setTimeout(function () {
-                _this_1.send(message);
+                _this.send(message);
             }, 400);
         }
     };
@@ -141,12 +143,12 @@ var PubsubConnector = (function () {
         }
     };
     PubsubConnector.prototype.scheduleHeartbeat = function () {
-        var _this_1 = this;
+        var _this = this;
         setInterval(function () {
-            _this_1.send(JSON.stringify({
+            _this.send(JSON.stringify({
                 _id: 16,
             }));
-        }, 14000);
+        }, 13000);
     };
     PubsubConnector.prototype.subscribe = function (symbols, fields, callback) {
         if (!symbols[0]) {
@@ -170,22 +172,23 @@ var PubsubConnector = (function () {
         return this.subId;
     };
     PubsubConnector.prototype.checkSubscriptionHasSnapshot = function (symbols, fields) {
-        var _this_1 = this;
-        symbols.forEach(function (s) {
-            fields.forEach(function (f) {
-                var _a;
-                if (((_a = _this_1.subscriptions[s]) === null || _a === void 0 ? void 0 : _a[f]) &&
-                    typeof _this_1.subscriptions[s][f] !== "undefined") {
+        var _a;
+        for (var _b = 0, symbols_1 = symbols; _b < symbols_1.length; _b++) {
+            var s = symbols_1[_b];
+            for (var _c = 0, fields_1 = fields; _c < fields_1.length; _c++) {
+                var f = fields_1[_c];
+                if (((_a = this.subscriptions[s]) === null || _a === void 0 ? void 0 : _a[f]) &&
+                    typeof this.subscriptions[s][f] !== "undefined") {
                     var sendData = { _id: 1, _s: 1, _i: "" };
                     sendData._i = s;
-                    sendData[f] = _this_1.subscriptions[s][f];
-                    _this_1.callback(sendData);
-                    if (_this_1.options.sendData) {
-                        _this_1.options.sendData(sendData);
+                    sendData[f] = this.subscriptions[s][f];
+                    this.callback(sendData);
+                    if (this.options.sendData) {
+                        this.options.sendData(sendData);
                     }
                 }
-            });
-        });
+            }
+        }
     };
     PubsubConnector.prototype.getFieldSnapShotValue = function (definitionId, fieldShortCode) {
         var _a;
@@ -196,30 +199,31 @@ var PubsubConnector = (function () {
         return null;
     };
     PubsubConnector.prototype.addSubscriptions = function (subId, symbols, fields, callback) {
-        var _this_1 = this;
-        symbols.forEach(function (s) {
-            if (!_this_1.subscriptions[s]) {
-                _this_1.subscriptions[s] = {};
-                _this_1.subscriptions[s].callback = {};
+        for (var _a = 0, symbols_2 = symbols; _a < symbols_2.length; _a++) {
+            var s = symbols_2[_a];
+            if (!this.subscriptions[s]) {
+                this.subscriptions[s] = {};
+                this.subscriptions[s].callback = {};
             }
             if (callback)
-                _this_1.subscriptions[s].callback[subId] = callback;
-            fields.forEach(function (f) {
-                if (!_this_1.subscriptions[s][f]) {
-                    _this_1.subscriptions[s][f] = undefined;
+                this.subscriptions[s].callback[subId] = callback;
+            for (var _b = 0, fields_2 = fields; _b < fields_2.length; _b++) {
+                var f = fields_2[_b];
+                if (!this.subscriptions[s][f]) {
+                    this.subscriptions[s][f] = undefined;
                 }
-            });
-        });
+            }
+        }
     };
     PubsubConnector.prototype.reSubscribe = function () {
-        var _this_1 = this;
         if (this.isSocketReady()) {
             this.subscriptions = {};
             var tempSubMap = Object.assign([], this.subscriptionsMap);
             this.subscriptionsMap = [];
-            tempSubMap.forEach(function (s) {
-                _this_1.subscribe(s.symbols, s.fields, s.callback);
-            });
+            for (var _a = 0, _b = tempSubMap; _a < _b.length; _a++) {
+                var s = _b[_a];
+                this.subscribe(s.symbols, s.fields, s.callback);
+            }
         }
     };
     PubsubConnector.prototype.unSubscribe = function (id) {
@@ -240,27 +244,28 @@ var PubsubConnector = (function () {
         }
     };
     PubsubConnector.prototype.unSubscribeAll = function () {
-        for (var i = 0; i < this.subscriptionsMap.length; i++) {
-            var sub = this.subscriptionsMap[i];
+        for (var _a = 0, _b = this.subscriptionsMap; _a < _b.length; _a++) {
+            var sub = _b[_a];
             this.unSubscribe(sub.id);
         }
     };
     PubsubConnector.prototype.feedSubscriptions = function (data) {
-        var _this_1 = this;
+        var _this = this;
         if (this.subscriptions[data._i]) {
             Object.keys(data).forEach(function (d) {
-                if (_this_1.subscriptions[data._i]) {
-                    _this_1.subscriptions[data._i][d] = data[d];
+                if (_this.subscriptions[data._i]) {
+                    _this.subscriptions[data._i][d] = data[d];
                 }
             });
         }
     };
     PubsubConnector.prototype.callback = function (data) {
-        if (this.subscriptions[data._i] &&
-            this.subscriptions[data._i].callback &&
+        var _a;
+        if (((_a = this.subscriptions[data._i]) === null || _a === void 0 ? void 0 : _a.callback) &&
             this.subscriptions[data._i].callback) {
-            for (var i = 0; i < Object.keys(this.subscriptions[data._i].callback).length; i++) {
-                var callback = this.subscriptions[data._i].callback[Object.keys(this.subscriptions[data._i].callback)[i]];
+            for (var _b = 0, _c = Object.keys(this.subscriptions[data._i].callback); _b < _c.length; _b++) {
+                var sub = _c[_b];
+                var callback = this.subscriptions[data._i].callback[sub];
                 if (callback)
                     callback(data);
             }
@@ -289,7 +294,7 @@ var PubsubConnector = (function () {
                     this.userLincenses = message.licenses;
                 }
                 if (message.result === 101) {
-                    console.log("message: Socket Login Failed");
+                    console.error("message: Socket Login Failed");
                     if (this.options.onError) {
                         this.options.onError(message);
                     }
