@@ -371,11 +371,11 @@ export default class PubsubConnector implements IPubsubConnector {
           fields: findSub.fields,
         })
       );
-      findSub.symbols.map((symbol: string) => {
-        delete this.subscriptions[symbol].callback[id];
-      });
-      this.subscriptionsMap.splice(mapIndex, 1);
     }
+    findSub.symbols.map((symbol: string) => {
+      delete this.subscriptions[symbol].callback[id];
+    });
+    this.subscriptionsMap.splice(mapIndex, 1);
   }
 
   /**
