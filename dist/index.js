@@ -241,11 +241,11 @@ var PubsubConnector = (function () {
                 symbols: findSub.symbols,
                 fields: findSub.fields,
             }));
-            findSub.symbols.map(function (symbol) {
-                delete _this.subscriptions[symbol].callback[id];
-            });
-            this.subscriptionsMap.splice(mapIndex, 1);
         }
+        findSub.symbols.map(function (symbol) {
+            delete _this.subscriptions[symbol].callback[id];
+        });
+        this.subscriptionsMap.splice(mapIndex, 1);
     };
     PubsubConnector.prototype.unSubscribeAll = function () {
         for (var _a = 0, _b = this.subscriptionsMap; _a < _b.length; _a++) {
