@@ -230,7 +230,11 @@ var PubsubConnector = (function () {
         var _this = this;
         var mapIndex = this.subscriptionsMap.findIndex(function (s) { return s.id === id; });
         var findSub = this.subscriptionsMap[mapIndex];
-        if (findSub) {
+        var foundSameField = this.subscriptionsMap.find(function (sm) {
+            var _a;
+            return (_a = sm.fields).includes.apply(_a, findSub.fields);
+        });
+        if (!foundSameField) {
             this.send(JSON.stringify({
                 _id: 2,
                 id: findSub.id,

@@ -359,7 +359,10 @@ export default class PubsubConnector implements IPubsubConnector {
   public unSubscribe(id: number): void {
     const mapIndex = this.subscriptionsMap.findIndex((s) => s.id === id);
     const findSub = this.subscriptionsMap[mapIndex];
-    if (findSub) {
+    const foundSameField = this.subscriptionsMap.find((sm) =>
+      sm.fields.includes(...findSub.fields)
+    );
+    if (!foundSameField) {
       this.send(
         JSON.stringify({
           _id: 2,
