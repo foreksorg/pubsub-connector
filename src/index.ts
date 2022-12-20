@@ -207,7 +207,7 @@ export default class PubsubConnector implements IPubsubConnector {
             "client-address": clientAddress,
             "client-port": clientPort,
             "client-language": clientLanguage,
-            "client-navigator": clientNavigator,
+            "client-navigator": clientNavigator.replace(/,/g, ""),
           },
           resource,
         })

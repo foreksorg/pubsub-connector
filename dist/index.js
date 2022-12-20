@@ -136,7 +136,7 @@ var PubsubConnector = (function () {
                     "client-address": clientAddress,
                     "client-port": clientPort,
                     "client-language": clientLanguage,
-                    "client-navigator": clientNavigator,
+                    "client-navigator": clientNavigator.replace(/,/g, ""),
                 },
                 resource: resource,
             }));
