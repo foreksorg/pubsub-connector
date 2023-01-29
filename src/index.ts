@@ -1,5 +1,195 @@
-import IPubSubConnectionOptions from "./IPubSubConnectionOptions";
-import IPubsubConnector from "./IPubsubConnector";
+export interface PubsubLicense {
+  delay: number;
+  name: string;
+}
+export interface PubsubData {
+  _id: number; // id of message
+  _i?: string; // definition id
+  _s?: number; // is snapshot
+  t?: number; // time
+  result?: number; // resulting
+  st?: string; // status
+  licenses?: PubsubLicense[]; // licenses
+}
+export interface IPubSubConnectionOptions {
+  username: string;
+  password: string;
+  resource: string;
+  url: string;
+  company: string;
+  appName: string;
+  autoReconnect?: boolean;
+  reConnectInterval?: number;
+  reConnectCountLimit?: number;
+  sendData?: Function;
+  onError?: Function;
+}
+
+export interface IPubsubConnector {
+  /**
+   * @description reset reconnect count
+   * @return {void}
+   */
+  resetReconnectCount(): void;
+
+  /**
+   * @description set options for socket
+   * @param {PubSubConnectionOptions} options : options
+   * @return {void}
+   */
+  setOptions(options: IPubSubConnectionOptions): void;
+
+  /**
+   * @description get socket connection
+   * @return {WebSocket}
+   */
+  getSocket(): WebSocket;
+
+  /**
+   * @description connect to socket
+   * @return {Promise<WebSocket>}
+   */
+  connect(): Promise<WebSocket>;
+
+  /**
+   * @description disconnect from socket
+   * @return {void}
+   */
+  disconnect(): void;
+
+  /**
+   * @description is socket ready
+   * @return {boolean}
+   */
+  isSocketReady(): boolean;
+
+  /**
+   * @description get subscription by id
+   * @param {string} id id
+   */
+  getSubscriptionsById(id: string);
+
+  /**
+   * @description get subscriptions
+   * @return {any}
+   */
+  getSubscriptions(): any;
+
+  /**
+   * @description send message via socket
+   * @param {string} message  message
+   * @return {void}
+   */
+  send(message: string): void;
+
+  /**
+   * @description send login message to socket
+   * @param {string} username username
+   * @param {string} password password
+   * @param {string} resource resource
+   * @return {void}
+   */
+  login(username: string, password: string, resource: string): void;
+
+  /**
+   * @description schedule heart beat for socket service.
+   * @return {void}
+   */
+  scheduleHeartbeat(): void;
+
+  /**
+   * @description subscribe
+   * @param {string[]} symbols symbols list
+   * @param {string[]} fields fields list
+   * @param {Function} callback callback method
+   * @return {number} subscription id
+   */
+  subscribe(
+    symbols: string[],
+    fields: string[],
+    callback?: (data: PubsubData) => PubsubData
+  ): number;
+
+  /**
+   * @description check subscription has snapshot data if has sent it to pubsub sendData service
+   * @param {string[]} symbols symbols list
+   * @param {string[]} fields fields list
+   * @return {void}
+   */
+  checkSubscriptionHasSnapshot(symbols: string[], fields: string[]): void;
+
+  /**
+   * @description get field snapshot value if exsist
+   * @param {string} definitionId definition id
+   * @param {string} fieldShortCode fields shortcode
+   * @return {any | null} field value
+   */
+  getFieldSnapShotValue(
+    definitionId: string,
+    fieldShortCode: string
+  ): any | null;
+
+  /**
+   * @description check subscription has snapshot data if has sent it to pubsub sendData service
+   * @param {number} subId : subscription id
+   * @param {string[]} symbols : symbols list
+   * @param {string[]} fields : fields list
+   * @param {Function} callback : callback method
+   * @return {void}
+   */
+  addSubscriptions(
+    subId: number,
+    symbols: string[],
+    fields: string[],
+    callback?: (data: any) => any
+  ): void;
+
+  /**
+   * @description re subscribe with old subscription map
+   * @return {void}
+   */
+  reSubscribe(): void;
+
+  /**
+   * @description unsubscribe with subscription id
+   * @param {number} id subscription id
+   * @return {void}
+   */
+  unSubscribe(id: number): void;
+
+  /**
+   * @description unsubscribe all subscriptions
+   * @return {void}
+   */
+  unSubscribeAll(): void;
+
+  /**
+   * @description feed subscriptions
+   * @param {PubsubData} data socket data
+   * @return {void}
+   */
+  feedSubscriptions(data: PubsubData): void;
+
+  /**
+   * @description callback
+   * @param {PubsubData} data socket data
+   * @return {void}
+   */
+  callback(data: PubsubData): void;
+
+  /**
+   * @description send message via socket
+   * @param {PubsubData} data socket data
+   * @return {void}
+   */
+  messageEvent(data: PubsubData): void;
+
+  /**
+   * @description get user licenses
+   * @return {PubsubLicense[]} user licenses
+   */
+  getLicenses(): PubsubLicense[];
+}
 
 /**
  * @description Pubsub Socket Service provide connect socket and manage socket actions
@@ -10,7 +200,7 @@ export default class PubsubConnector implements IPubsubConnector {
   private subscriptionsMap: any[] = [];
   private isLogin: boolean = false;
   private subId = 0;
-  private userLincenses = [];
+  private userLincenses: PubsubLicense[] = [];
   private reConnectCount = 0;
   private options: IPubSubConnectionOptions = {
     url: "wss://websocket.foreks.com",
@@ -61,7 +251,7 @@ export default class PubsubConnector implements IPubsubConnector {
 
   /**
    * @description connect to socket
-   * @param {PubSubConnectionOptions} options : options
+   * @return {Promise<WebSocket>}
    */
   public connect(): Promise<WebSocket> {
     this.reConnectCount += 1;
@@ -83,8 +273,8 @@ export default class PubsubConnector implements IPubsubConnector {
 
       // on server open
       this.socket.onopen = () => {
-        this.socket.onmessage = (msg: any) => {
-          const msgData = JSON.parse(msg.data);
+        this.socket.onmessage = (msg: MessageEvent<any>) => {
+          const msgData: PubsubData = JSON.parse(msg.data);
           this.feedSubscriptions(msgData);
           this.messageEvent(msgData);
         };
@@ -121,6 +311,7 @@ export default class PubsubConnector implements IPubsubConnector {
 
   /**
    * @description disconnect from socket
+   * @return {void}
    */
   public disconnect(): void {
     this.socket.onclose = () => {
@@ -139,7 +330,7 @@ export default class PubsubConnector implements IPubsubConnector {
 
   /**
    * @description get subscription by id
-   * @param {string} id : id
+   * @param {string} id id
    */
   public getSubscriptionsById(id: string) {
     if (this.subscriptions[id]) {
@@ -149,7 +340,7 @@ export default class PubsubConnector implements IPubsubConnector {
 
   /**
    * @description get subscriptions
-   * @returns {any}
+   * @return {any}
    */
   public getSubscriptions(): any {
     return this.subscriptions;
@@ -157,9 +348,10 @@ export default class PubsubConnector implements IPubsubConnector {
 
   /**
    * @description send message via socket
-   * @param {string} message : message
+   * @param {string} message  message
+   * @return {void}
    */
-  public send(message: string) {
+  public send(message: string): void {
     if (this.isSocketReady()) {
       this.socket.send(message);
     } else {
@@ -171,9 +363,10 @@ export default class PubsubConnector implements IPubsubConnector {
 
   /**
    * @description send login message to socket
-   * @param {string} username : username
-   * @param {string} password : password
-   * @param {string} resource : resource
+   * @param {string} username username
+   * @param {string} password password
+   * @param {string} resource resource
+   * @return {void}
    */
   public login(username: string, password: string, resource: string): void {
     if (this.isSocketReady()) {
@@ -190,6 +383,8 @@ export default class PubsubConnector implements IPubsubConnector {
         clientPort = location.port;
         clientLanguage = window.navigator.language;
         clientNavigator = window.navigator.appVersion;
+      } else {
+        deviceOss = process.platform;
       }
 
       this.send(
@@ -217,6 +412,7 @@ export default class PubsubConnector implements IPubsubConnector {
 
   /**
    * @description schedule heart beat for socket service.
+   * @return {void}
    */
   public scheduleHeartbeat(): void {
     setInterval(() => {
@@ -230,15 +426,15 @@ export default class PubsubConnector implements IPubsubConnector {
 
   /**
    * @description subscribe
-   * @param {string[]} symbols : symbols list
-   * @param {string[]} fields : fields list
-   * @param {Function} callback : callback method
-   * @returns {number} subscription id
+   * @param {string[]} symbols symbols list
+   * @param {string[]} fields fields list
+   * @param {Function} callback callback method
+   * @return {number} subscription id
    */
   public subscribe(
     symbols: string[],
     fields: string[],
-    callback?: (data: any) => any
+    callback?: (data: PubsubData) => PubsubData
   ): number {
     if (!symbols[0]) {
       throw new Error("Symbol expired");
@@ -269,17 +465,21 @@ export default class PubsubConnector implements IPubsubConnector {
 
   /**
    * @description check subscription has snapshot data if has sent it to pubsub sendData service
-   * @param {string[]} symbols : symbols list
-   * @param {string[]} fields : fields list
+   * @param {string[]} symbols symbols list
+   * @param {string[]} fields fields list
+   * @return {void}
    */
-  public checkSubscriptionHasSnapshot(symbols: string[], fields: string[]) {
+  public checkSubscriptionHasSnapshot(
+    symbols: string[],
+    fields: string[]
+  ): void {
     for (const s of symbols) {
       for (const f of fields) {
         if (
           this.subscriptions[s]?.[f] &&
           typeof this.subscriptions[s][f] !== "undefined"
         ) {
-          const sendData = { _id: 1, _s: 1, _i: "" };
+          const sendData: PubsubData = { _id: 1, _s: 1, _i: "" };
           sendData._i = s;
           sendData[f] = this.subscriptions[s][f];
           this.callback(sendData);
@@ -293,8 +493,9 @@ export default class PubsubConnector implements IPubsubConnector {
 
   /**
    * @description get field snapshot value if exsist
-   * @param {string} definitionId : definition id
-   * @param {string} fieldShortCode : fields shortcode
+   * @param {string} definitionId definition id
+   * @param {string} fieldShortCode fields shortcode
+   * @return {any | null} field value
    */
   public getFieldSnapShotValue(
     definitionId: string,
@@ -315,6 +516,7 @@ export default class PubsubConnector implements IPubsubConnector {
    * @param {string[]} symbols : symbols list
    * @param {string[]} fields : fields list
    * @param {Function} callback : callback method
+   * @return {void}
    */
   public addSubscriptions(
     subId: number,
@@ -340,6 +542,7 @@ export default class PubsubConnector implements IPubsubConnector {
 
   /**
    * @description re subscribe with old subscription map
+   * @return {void}
    */
   public reSubscribe(): void {
     if (this.isSocketReady()) {
@@ -354,7 +557,8 @@ export default class PubsubConnector implements IPubsubConnector {
 
   /**
    * @description unsubscribe with subscription id
-   * @param {number} id : subscription id
+   * @param {number} id subscription id
+   * @return {void}
    */
   public unSubscribe(id: number): void {
     const mapIndex = this.subscriptionsMap.findIndex((s) => s.id === id);
@@ -389,6 +593,7 @@ export default class PubsubConnector implements IPubsubConnector {
 
   /**
    * @description unsubscribe all subscriptions
+   * @return {void}
    */
   public unSubscribeAll(): void {
     for (const sub of this.subscriptionsMap) {
@@ -398,24 +603,27 @@ export default class PubsubConnector implements IPubsubConnector {
 
   /**
    * @description feed subscriptions
-   * @param {any} data : socket data
+   * @param {PubsubData} data socket data
+   * @return {void}
    */
-  public feedSubscriptions(data: any): void {
-    if (this.subscriptions[data._i]) {
-      Object.keys(data).forEach((d) => {
+  public feedSubscriptions(data: PubsubData): void {
+    if (data._i && this.subscriptions[data._i]) {
+      for (const d of Object.keys(data)) {
         if (this.subscriptions[data._i]) {
           this.subscriptions[data._i][d] = data[d];
         }
-      });
+      }
     }
   }
 
   /**
    * @description callback
-   * @param {any} data : socket data
+   * @param {PubsubData} data socket data
+   * @return {void}
    */
-  public callback(data: any): void {
+  public callback(data: PubsubData): void {
     if (
+      data._i &&
       this.subscriptions[data._i]?.callback &&
       this.subscriptions[data._i].callback
     ) {
@@ -428,10 +636,11 @@ export default class PubsubConnector implements IPubsubConnector {
 
   /**
    * @description send message via socket
-   * @param {string} message : message
+   * @param {PubsubData} data socket data
+   * @return {void}
    */
-  public messageEvent(message: any) {
-    switch (message._id) {
+  public messageEvent(data: PubsubData): void {
+    switch (data._id) {
       case 0:
         break;
       case 16:
@@ -445,31 +654,31 @@ export default class PubsubConnector implements IPubsubConnector {
         break;
       case 65:
         // Same user logged in another location
-        if (message.result === 0) {
+        if (data.result === 0) {
           console.error("message: Same user logged in another location");
           this.disconnect();
           if (this.options.onError) {
-            this.options.onError(message);
+            this.options.onError(data);
           }
         }
         // start heartbeat
-        if (message.result === 100) {
+        if (data.result === 100) {
           this.scheduleHeartbeat();
           this.reSubscribe();
-          this.userLincenses = message.licenses;
+          this.userLincenses = data.licenses || [];
         }
         // login failed
-        if (message.result === 101) {
+        if (data.result === 101) {
           console.error("message: Socket Login Failed");
           if (this.options.onError) {
-            this.options.onError(message);
+            this.options.onError(data);
           }
         }
         break;
       case 1:
-        this.callback(message);
+        this.callback(data);
         if (this.options.sendData) {
-          this.options.sendData(message);
+          this.options.sendData(data);
         }
         break;
       case 67:
@@ -477,7 +686,7 @@ export default class PubsubConnector implements IPubsubConnector {
       default:
         console.warn(
           "Event message not mapped to any method. Message is : ",
-          message
+          data
         );
         break;
     }
@@ -485,8 +694,9 @@ export default class PubsubConnector implements IPubsubConnector {
 
   /**
    * @description get user licenses
+   * @return {PubsubLicense[]} user licenses
    */
-  public getLicenses(): any[] {
+  public getLicenses(): PubsubLicense[] {
     return this.userLincenses;
   }
 }

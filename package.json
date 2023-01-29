@@ -1,13 +1,13 @@
 {
   "name": "foreks-pubsub-connector",
-  "version": "1.4.8",
+  "version": "1.4.9",
   "description": "Foreks Pubsub Connection",
   "author": "Emre Toprak <emre.toprak@foreks.com>",
   "main": "./dist/index.js",
   "module": "./dist/index.esm.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "rollup -c",
+    "build": "rm -Rf dist && rollup -c",
     "dev": "rollup -c -w",
     "test": "npm run build && jest --coverage"
   },

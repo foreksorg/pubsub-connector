@@ -122,6 +122,9 @@ var PubsubConnector = (function () {
                 clientLanguage = window.navigator.language;
                 clientNavigator = window.navigator.appVersion;
             }
+            else {
+                deviceOss = process.platform;
+            }
             this.send(JSON.stringify({
                 _id: 64,
                 user: username,
@@ -264,18 +267,19 @@ var PubsubConnector = (function () {
         }
     };
     PubsubConnector.prototype.feedSubscriptions = function (data) {
-        var _this = this;
-        if (this.subscriptions[data._i]) {
-            Object.keys(data).forEach(function (d) {
-                if (_this.subscriptions[data._i]) {
-                    _this.subscriptions[data._i][d] = data[d];
+        if (data._i && this.subscriptions[data._i]) {
+            for (var _a = 0, _b = Object.keys(data); _a < _b.length; _a++) {
+                var d = _b[_a];
+                if (this.subscriptions[data._i]) {
+                    this.subscriptions[data._i][d] = data[d];
                 }
-            });
+            }
         }
     };
     PubsubConnector.prototype.callback = function (data) {
         var _a;
-        if (((_a = this.subscriptions[data._i]) === null || _a === void 0 ? void 0 : _a.callback) &&
+        if (data._i &&
+            ((_a = this.subscriptions[data._i]) === null || _a === void 0 ? void 0 : _a.callback) &&
             this.subscriptions[data._i].callback) {
             for (var _b = 0, _c = Object.keys(this.subscriptions[data._i].callback); _b < _c.length; _b++) {
                 var sub = _c[_b];
@@ -285,8 +289,8 @@ var PubsubConnector = (function () {
             }
         }
     };
-    PubsubConnector.prototype.messageEvent = function (message) {
-        switch (message._id) {
+    PubsubConnector.prototype.messageEvent = function (data) {
+        switch (data._id) {
             case 0:
                 break;
             case 16:
@@ -295,35 +299,35 @@ var PubsubConnector = (function () {
                 this.login(this.options.username, this.options.password, this.options.resource);
                 break;
             case 65:
-                if (message.result === 0) {
+                if (data.result === 0) {
                     console.error("message: Same user logged in another location");
                     this.disconnect();
                     if (this.options.onError) {
-                        this.options.onError(message);
+                        this.options.onError(data);
                     }
                 }
-                if (message.result === 100) {
+                if (data.result === 100) {
                     this.scheduleHeartbeat();
                     this.reSubscribe();
-                    this.userLincenses = message.licenses;
+                    this.userLincenses = data.licenses || [];
                 }
-                if (message.result === 101) {
+                if (data.result === 101) {
                     console.error("message: Socket Login Failed");
                     if (this.options.onError) {
-                        this.options.onError(message);
+                        this.options.onError(data);
                     }
                 }
                 break;
             case 1:
-                this.callback(message);
+                this.callback(data);
                 if (this.options.sendData) {
-                    this.options.sendData(message);
+                    this.options.sendData(data);
                 }
                 break;
             case 67:
                 break;
             default:
-                console.warn("Event message not mapped to any method. Message is : ", message);
+                console.warn("Event message not mapped to any method. Message is : ", data);
                 break;
         }
     };
