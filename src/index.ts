@@ -434,7 +434,7 @@ export default class PubsubConnector implements IPubsubConnector {
   public subscribe(
     symbols: string[],
     fields: string[],
-    callback?: (data: PubsubData) => PubsubData
+    callback?: (data: PubsubData) => void
   ): number {
     if (!symbols[0]) {
       throw new Error("Symbol expired");
