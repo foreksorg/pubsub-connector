@@ -107,7 +107,7 @@ export interface IPubsubConnector {
   subscribe(
     symbols: string[],
     fields: string[],
-    callback?: (data: PubsubData) => PubsubData
+    callback?: (data: PubsubData) => void
   ): number;
 
   /**

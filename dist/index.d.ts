@@ -36,7 +36,7 @@ export interface IPubsubConnector {
     send(message: string): void;
     login(username: string, password: string, resource: string): void;
     scheduleHeartbeat(): void;
-    subscribe(symbols: string[], fields: string[], callback?: (data: PubsubData) => PubsubData): number;
+    subscribe(symbols: string[], fields: string[], callback?: (data: PubsubData) => void): number;
     checkSubscriptionHasSnapshot(symbols: string[], fields: string[]): void;
     getFieldSnapShotValue(definitionId: string, fieldShortCode: string): any | null;
     addSubscriptions(subId: number, symbols: string[], fields: string[], callback?: (data: any) => any): void;
