@@ -1,6 +1,12 @@
 'use strict';
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PubsubNewsActionType = void 0;
+(function (PubsubNewsActionType) {
+    PubsubNewsActionType["INSERT"] = "insert";
+    PubsubNewsActionType["UPDATE"] = "update";
+    PubsubNewsActionType["DELETE"] = "delete";
+})(exports.PubsubNewsActionType || (exports.PubsubNewsActionType = {}));
 var PubsubConnector = (function () {
     function PubsubConnector(options) {
         this.subscriptions = {};
