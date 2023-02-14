@@ -1416,32 +1416,33 @@ export default class PubsubConnector implements IPubsubConnector {
   public unSubscribe(id: number): void {
     const mapIndex = this.subscriptionsMap.findIndex((s) => s.id === id);
     const findSub = this.subscriptionsMap[mapIndex];
-    const foundSameField: any[] = [];
-    for (const sm of this.subscriptionsMap) {
-      for (const smf of findSub.fields) {
-        if (
-          sm.fields.includes(smf) &&
-          foundSameField.findIndex((fsf) => fsf.id === sm.id) === -1
-        ) {
-          foundSameField.push(sm);
+    if (findSub) {
+      const foundSameField: any[] = [];
+      for (const sm of this.subscriptionsMap) {
+        for (const smf of findSub.fields) {
+          if (
+            sm.fields.includes(smf) &&
+            foundSameField.findIndex((fsf) => fsf.id === sm.id) === -1
+          ) {
+            foundSameField.push(sm);
+          }
         }
       }
+      if (foundSameField.length <= 1) {
+        this.send(
+          JSON.stringify({
+            _id: 2,
+            id: findSub.id,
+            symbols: findSub.symbols,
+            fields: findSub.fields,
+          })
+        );
+      }
+      findSub.symbols.map((symbol: string) => {
+        delete this.subscriptions[symbol].callback[id];
+      });
+      this.subscriptionsMap.splice(mapIndex, 1);
     }
-
-    if (foundSameField.length <= 1) {
-      this.send(
-        JSON.stringify({
-          _id: 2,
-          id: findSub.id,
-          symbols: findSub.symbols,
-          fields: findSub.fields,
-        })
-      );
-    }
-    findSub.symbols.map((symbol: string) => {
-      delete this.subscriptions[symbol].callback[id];
-    });
-    this.subscriptionsMap.splice(mapIndex, 1);
   }
 
   /**

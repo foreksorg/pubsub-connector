@@ -239,32 +239,34 @@ var PubsubConnector = (function () {
         var _this = this;
         var mapIndex = this.subscriptionsMap.findIndex(function (s) { return s.id === id; });
         var findSub = this.subscriptionsMap[mapIndex];
-        var foundSameField = [];
-        var _loop_1 = function (sm) {
-            for (var _c = 0, _d = findSub.fields; _c < _d.length; _c++) {
-                var smf = _d[_c];
-                if (sm.fields.includes(smf) &&
-                    foundSameField.findIndex(function (fsf) { return fsf.id === sm.id; }) === -1) {
-                    foundSameField.push(sm);
+        if (findSub) {
+            var foundSameField = [];
+            var _loop_1 = function (sm) {
+                for (var _c = 0, _d = findSub.fields; _c < _d.length; _c++) {
+                    var smf = _d[_c];
+                    if (sm.fields.includes(smf) &&
+                        foundSameField.findIndex(function (fsf) { return fsf.id === sm.id; }) === -1) {
+                        foundSameField.push(sm);
+                    }
                 }
+            };
+            for (var _a = 0, _b = this.subscriptionsMap; _a < _b.length; _a++) {
+                var sm = _b[_a];
+                _loop_1(sm);
             }
-        };
-        for (var _a = 0, _b = this.subscriptionsMap; _a < _b.length; _a++) {
-            var sm = _b[_a];
-            _loop_1(sm);
+            if (foundSameField.length <= 1) {
+                this.send(JSON.stringify({
+                    _id: 2,
+                    id: findSub.id,
+                    symbols: findSub.symbols,
+                    fields: findSub.fields,
+                }));
+            }
+            findSub.symbols.map(function (symbol) {
+                delete _this.subscriptions[symbol].callback[id];
+            });
+            this.subscriptionsMap.splice(mapIndex, 1);
         }
-        if (foundSameField.length <= 1) {
-            this.send(JSON.stringify({
-                _id: 2,
-                id: findSub.id,
-                symbols: findSub.symbols,
-                fields: findSub.fields,
-            }));
-        }
-        findSub.symbols.map(function (symbol) {
-            delete _this.subscriptions[symbol].callback[id];
-        });
-        this.subscriptionsMap.splice(mapIndex, 1);
     };
     PubsubConnector.prototype.unSubscribeAll = function () {
         for (var _a = 0, _b = this.subscriptionsMap; _a < _b.length; _a++) {
